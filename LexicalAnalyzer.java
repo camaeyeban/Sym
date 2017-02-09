@@ -2,7 +2,6 @@
     @TODOs:
 
     Check for escaped characters in strings
-    Token Values
     String Literal
 */
 
@@ -16,22 +15,27 @@ public class LexicalAnalyzer {
         this.fileContents = fileContents;
     }
 
-    private Token getKeyword(String fileContents) {
+    private String getWord(String fileContents) {
         String tokenBuffer = "";
         int i = 0;
 
-        while(!isDelimIter(fileContents.charAt(i))) {
+        while(!isDelimiter(fileContents.charAt(i))) {
             tokenBuffer += fileContents.charAt(i);
             i++;
         }
 
-        // identify type here
+        return tokenBuffer;
+    }
 
-        return new Token(TypeAnalyzer.identify(tokenBuffer), tokenBuffer);
+    private Token getKeyword(String fileContents) {
+        String word = getWord(fileContents);
+
+        return new Token(TypeAnalyzer.identify(word), word);
     }
 
     public void generateLexemes() {
         ArrayList<Token> tokens = new ArrayList<Token>();
+        boolean stringFlag = false;
 
         for(int i = 0; i < fileContents.length();) {
             switch(fileContents.charAt(i)) {   
@@ -57,6 +61,7 @@ public class LexicalAnalyzer {
                 }
                 case '"': {
                     tokens.add(new Token("CODE_DELIMITER_LEFT", "\""));
+                    stringFlag = !stringFlag;
                     i++;
                     break;
                 }
@@ -81,6 +86,16 @@ public class LexicalAnalyzer {
                         break;
                     }
 
+                    if (stringFlag) {
+                        String word = getWord(fileContents.substring(i));
+
+                        tokens.add(new Token("STRING_LITERAL", word));
+
+                        i += word.length();
+
+                        break;
+                    }
+
                     Token keyword = getKeyword(fileContents.substring(i));
 
                     tokens.add(keyword);
@@ -93,7 +108,7 @@ public class LexicalAnalyzer {
         System.out.println(tokens);
     }
 
-    private boolean isDelimIter(char c) {
+    private boolean isDelimiter(char c) {
         for(int i = 0; i < Meta.DELIMITERS.length; i++) {
             if (c == Meta.DELIMITERS[i]) return true;
         }
