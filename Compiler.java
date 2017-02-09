@@ -15,6 +15,7 @@ public class Compiler {
 		//System.out.println(fileContent);
 
 		LexicalAnalyzer lex = new LexicalAnalyzer(fileContent);
+		lex.generateLexemes();
 	}
 
     public String readFile(){

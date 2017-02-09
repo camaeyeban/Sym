@@ -2,7 +2,8 @@
     @TODOs:
 
     Check for escaped characters in strings
-    Identify Type
+    Token Values
+    String Literal
 */
 
 import java.util.ArrayList;
@@ -19,60 +20,58 @@ public class LexicalAnalyzer {
         String tokenBuffer = "";
         int i = 0;
 
-        while(!isDelimeter(fileContents.charAt(i))) {
+        while(!isDelimIter(fileContents.charAt(i))) {
             tokenBuffer += fileContents.charAt(i);
             i++;
         }
 
         // identify type here
 
-        return new Token("TYPE_PENDING", tokenBuffer);
+        return new Token(TypeAnalyzer.identify(tokenBuffer), tokenBuffer);
     }
 
-    // @TODO: 
     public void generateLexemes() {
         ArrayList<Token> tokens = new ArrayList<Token>();
-        // Tokens here
 
         for(int i = 0; i < fileContents.length();) {
             switch(fileContents.charAt(i)) {   
                 case '(': {
-                    tokens.add(new Token("FUNCTION_DELIMETER_LEFT", "("));
+                    tokens.add(new Token("FUNCTION_DELIMITER_LEFT", "("));
                     i++;
                     break;
                 }
                 case ')': {
-                    tokens.add(new Token("FUNCTION_DELIMETER_RIGHT", ")"));
+                    tokens.add(new Token("FUNCTION_DELIMITER_RIGHT", ")"));
                     i++;
                     break;
                 }
                 case '{': {
-                    tokens.add(new Token("CODE_DELIMETER_LEFT", "{"));
+                    tokens.add(new Token("CODE_DELIMITER_LEFT", "{"));
                     i++;
                     break;
                 }
                 case '}': {
-                    tokens.add(new Token("CODE_DELIMETER_LEFT", "}"));
+                    tokens.add(new Token("CODE_DELIMITER_RIGHT", "}"));
                     i++;
                     break;
                 }
                 case '"': {
-                    tokens.add(new Token("CODE_DELIMETER_LEFT", "\""));
+                    tokens.add(new Token("CODE_DELIMITER_LEFT", "\""));
                     i++;
                     break;
                 }
                 case '|': {
-                    tokens.add(new Token("DATA_TYPE_DELIMETER", "|"));
+                    tokens.add(new Token("DATA_TYPE_DELIMITER", "|"));
                     i++;
                     break;
                 }
                 case ';': {
-                    tokens.add(new Token("STATEMENT_DELIMETER", ";"));
+                    tokens.add(new Token("STATEMENT_DELIMITER", ";"));
                     i++;
                     break;
                 }
                 case ',': {
-                    tokens.add(new Token("ARGUMENT_DELIMETER", ","));
+                    tokens.add(new Token("ARGUMENT_DELIMITER", ","));
                     i++;
                     break;
                 }
@@ -94,9 +93,9 @@ public class LexicalAnalyzer {
         System.out.println(tokens);
     }
 
-    private boolean isDelimeter(char c) {
-        for(int i = 0; i < Meta.DELIMETERS.length; i++) {
-            if (c == Meta.DELIMETERS[i]) return true;
+    private boolean isDelimIter(char c) {
+        for(int i = 0; i < Meta.DELIMITERS.length; i++) {
+            if (c == Meta.DELIMITERS[i]) return true;
         }
 
         return false;

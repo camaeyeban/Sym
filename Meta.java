@@ -11,7 +11,7 @@ public class Meta {
         "<-"
     };
 
-    public static char[] DELIMETERS = {
+    public static char[] DELIMITERS = {
         '{',
         '}',
         '(',
