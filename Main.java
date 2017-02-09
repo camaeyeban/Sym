@@ -1,7 +1,10 @@
 public class Main {
-    public static void main(String args[]) {
-        LexicalAnalyzer lexAnalyzer = new LexicalAnalyzer("@(main, non, (args|str){:(\"Hello world!\")})");
 
-        lexAnalyzer.generateLexemes();
+	static Compiler compiler;
+
+    public static void main(String args[]) {
+        String inputFile = args[0];
+        compiler = new Compiler(inputFile);
+        compiler.compile();
     }
 }

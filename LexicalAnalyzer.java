@@ -102,7 +102,3 @@ public class LexicalAnalyzer {
         return false;
     }
 }
-
-/*
-
-*/
