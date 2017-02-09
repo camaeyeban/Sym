@@ -2,7 +2,6 @@
     @TODOs:
 
     Check for escaped characters in strings
-    String Literal
 */
 
 import java.util.ArrayList;
