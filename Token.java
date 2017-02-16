@@ -1,7 +1,7 @@
 public class Token {
-    String value;
-    String type;
-    String lexeme;
+    private String value;
+    private String type;
+    private String lexeme;
 
     public Token(String type, String lexeme) {
         this.type = type;

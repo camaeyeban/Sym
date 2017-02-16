@@ -14,22 +14,24 @@ public class LexicalAnalyzer {
         this.fileContents = fileContents;
     }
 
-    private String getWord(String fileContents) {
+    private Keyword getKeyword(String fileContents) {
         String tokenBuffer = "";
         int i = 0;
+        int escaped = 0;
 
-        while(!isDelimiter(fileContents.charAt(i))) {
+        while(!isDelimiter(fileContents.charAt(i)) || escaped == 1) {
+            if (fileContents.charAt(i) == '\\' && escaped == 0) {
+                escaped = 1;
+                i++;
+                continue;
+            }
+
             tokenBuffer += fileContents.charAt(i);
+            escaped = 0;
             i++;
         }
 
-        return tokenBuffer;
-    }
-
-    private Token getKeyword(String fileContents) {
-        String word = getWord(fileContents);
-
-        return new Token(TypeAnalyzer.identify(word), word);
+        return new Keyword(new Token(TypeAnalyzer.identify(tokenBuffer), tokenBuffer), i);
     }
 
     public void generateLexemes() {
@@ -86,20 +88,20 @@ public class LexicalAnalyzer {
                     }
 
                     if (stringFlag) {
-                        String word = getWord(fileContents.substring(i));
+                        Keyword word = getKeyword(fileContents.substring(i));
 
-                        tokens.add(new Token("STRING_LITERAL", word));
+                        tokens.add(new Token("STRING_LITERAL", word.getToken().getLexeme()));
 
-                        i += word.length();
+                        i += word.getLength();
 
                         break;
                     }
 
-                    Token keyword = getKeyword(fileContents.substring(i));
+                    Keyword keyword = getKeyword(fileContents.substring(i));
 
-                    tokens.add(keyword);
+                    tokens.add(keyword.getToken());
 
-                    i += keyword.getLexeme().length();
+                    i += keyword.getLength();
                 }
             }
         }
