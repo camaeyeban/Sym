@@ -1,7 +1,7 @@
 public class Token {
-    String value;
-    String type;
-    String lexeme;
+    private String value;
+    private String type;
+    private String lexeme;
 
     public Token(String type, String lexeme) {
         this.type = type;
@@ -9,6 +9,12 @@ public class Token {
 
         this.value = ValueConverter.convert(type);
     }
+	
+	public Token(){
+		this.type = "END_OF_FILE_MARKER";
+		this.lexeme = "$";
+		this.value = "";
+	}
 
     public String getValue() {
         return this.value;
@@ -25,4 +31,5 @@ public class Token {
     public String toString() {
         return "\n<" + value + ", "+ this.type +", \"" + this.lexeme + "\">";
     }
+	
 }

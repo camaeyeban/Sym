@@ -2,12 +2,14 @@
     @TODOs:
 
     Check for escaped characters in strings
+	Skip comments
 */
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class LexicalAnalyzer {
+	
     String fileContents;
 
     public LexicalAnalyzer(String fileContents) {
@@ -32,7 +34,7 @@ public class LexicalAnalyzer {
         return new Token(TypeAnalyzer.identify(word), word);
     }
 
-    public void generateLexemes() {
+    public ArrayList<Token> generateLexemes() {
         ArrayList<Token> tokens = new ArrayList<Token>();
         boolean stringFlag = false;
 
@@ -59,7 +61,7 @@ public class LexicalAnalyzer {
                     break;
                 }
                 case '"': {
-                    tokens.add(new Token("CODE_DELIMITER_LEFT", "\""));
+                    tokens.add(new Token("STRING_DELIMITER", "\""));
                     stringFlag = !stringFlag;
                     i++;
                     break;
@@ -104,7 +106,11 @@ public class LexicalAnalyzer {
             }
         }
 
+		System.out.println("\n------------------- LEXICAL ANALYZER ------------------\n");
         System.out.println(tokens);
+        System.out.println("\n--------------- END OF LEXICAL ANALYZER ---------------\n");
+		
+        return tokens;
     }
 
     private boolean isDelimiter(char c) {
