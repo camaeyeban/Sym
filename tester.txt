@@ -6,7 +6,7 @@
 @(bar, non, (func|fn, x|int) {
       // call func
       func(x);
-})
+});
 
 @(main, non, (args|str) { // declare main function
 	// (almost) everything IS a function
