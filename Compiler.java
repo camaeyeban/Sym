@@ -40,7 +40,7 @@ public class Compiler {
 			br = new BufferedReader(new FileReader(this.inputFile));
 
 			while ((line = br.readLine()) != null) {
-				fileContent = fileContent.concat(line);
+				fileContent = fileContent.concat("\n" + line);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

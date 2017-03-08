@@ -29,7 +29,7 @@ public class ParseTable {
 		"Data' -> <EPSILON>",
 		"Variable_DataType_Pair' -> <DATA_TYPE_DELIMITER><DATA_TYPE>",
 		"String -> <STRING_DELIMITER><STRING_LITERAL><STRING_DELIMITER>",
-		"Anonymous_Function_Block -> <FUNCTION_DELIMITER_LEFT>Arguments<FUNCTION_DELIMITER_RIGHT>Code_Block",
+		"Anonymous_Function_Block -> Statement_Without_Delimiter' Code_Block",
 		"Code_Block -> <CODE_DELIMITER_LEFT>Statements<CODE_DELIMITER_RIGHT>"
 	};
 	int[][] pt = new int[][]{

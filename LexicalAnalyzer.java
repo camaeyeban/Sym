@@ -1,12 +1,13 @@
 /*
     @TODOs:
 
-    Check for escaped characters in strings
 	Skip comments
 */
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class LexicalAnalyzer {
 	
@@ -36,9 +37,26 @@ public class LexicalAnalyzer {
         return new Keyword(new Token(TypeAnalyzer.identify(tokenBuffer), tokenBuffer), i);
     }
 
+    private void clearComments() {
+        List<String> mappedContent = Arrays.asList(fileContents.split("\n"))
+            .stream()
+            .map(t -> removeComment(t))
+            .collect(Collectors.toList());
+
+        fileContents = joinString(mappedContent.toArray(new String[mappedContent.size()]), "\n");
+
+        
+    }
+
+    private String removeComment(String s) {
+        return s.indexOf("//") > -1 ? s.substring(0, s.indexOf("//")) : s;
+    }
+
     public ArrayList<Token> generateLexemes() {
         ArrayList<Token> tokens = new ArrayList<Token>();
         boolean stringFlag = false;
+
+        clearComments();
 
         for(int i = 0; i < fileContents.length();) {
             switch(fileContents.charAt(i)) {   
@@ -121,5 +139,18 @@ public class LexicalAnalyzer {
         }
 
         return false;
+    }
+
+    public static String joinString(Object[] arr, String separator) {
+        if (null == arr || 0 == arr.length) return "";
+
+        StringBuilder sb = new StringBuilder(256);
+        sb.append(arr[0]);
+
+        //if (arr.length == 1) return sb.toString();
+
+        for (int i = 1; i < arr.length; i++) sb.append(separator).append(arr[i]);
+
+        return sb.toString();
     }
 }
