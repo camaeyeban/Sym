@@ -12,11 +12,10 @@ public class SyntaxAnalyzer {
 		Recognizer rec = new Recognizer(this.tokens);
 		
 		String result = rec.recognize();
-			
+		
 		System.out.println("\n---------------------- RECOGNIZER ---------------------\n");
         System.out.println("Code is " + result + ".");
         System.out.println("\n------------------ END OF RECOGNIZER ------------------\n");
-	
 	}
 	
 }

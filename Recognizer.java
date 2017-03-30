@@ -9,6 +9,7 @@ public class Recognizer {
 	private ArrayList<Token> tokens = new ArrayList<Token>();
 	private Stack<GrammarSymbol> grammarSymbols = new Stack<GrammarSymbol>();
 	private ParseTable parseTable = new ParseTable();
+	private SymbolTable symbolTable = new SymbolTable();
 	
     public Recognizer(ArrayList<Token> tokens) {
 		this.tokens = tokens;
@@ -34,11 +35,27 @@ public class Recognizer {
 					GrammarSymbol g = grammarSymbols.pop();
 					i++;
 					System.out.println(repeat("  ", g.getIndent()) + g.getSymbol());
+					if(g.getSymbol().equals("CODE_DELIMITER_LEFT")){
+						symbolTable.enterBlock();
+						System.out.println("ENTERED BLOCK. CURRENT BLOCK LEVEL: "+symbolTable.getLevel());
+					}
+					else if(g.getSymbol().equals("CODE_DELIMITER_RIGHT")){
+						symbolTable.leaveBlock();
+						System.out.println("LEFT BLOCK. CURRENT BLOCK LEVEL: "+symbolTable.getLevel());
+					}
+					else if(g.getSymbol().equals("IDENTIFIER")){
+						if( (! Arrays.asList(Meta.RESERVED_FUNCTION_NAMES).contains(lexeme)) &&
+						(! Arrays.asList(Meta.DELIMITERS).contains(lexeme)) ){
+							symbolTable.install(lexeme, symbolTable.getLevel());
+							System.out.println("ADDED IDENTIFIER: "+lexeme+"\tBlock Level: "+symbolTable.getLevel()+"\tCurrent Block's Element Count: "+symbolTable.getBlockElementCount(symbolTable.getLevel()));
+						}
+					}
 				}
 				else{
 					return "REJECTED due to mismatch of current token and top of stack";
 				}
 			}
+			
 			// if TOS = nonterminal
 			else if(Arrays.asList(parseTable.nonterminals).contains(tos.getSymbol())){
 				int row = Arrays.asList(parseTable.nonterminals).indexOf(tos.getSymbol());
