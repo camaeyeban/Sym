@@ -53,6 +53,7 @@ public class Recognizer {
 							if(symbolToAdd == null) {
 								symbolTable.install(lexeme, symbolTable.getLevel());
 								System.out.println("ADDED IDENTIFIER: "+lexeme+"\tBlock Level: "+symbolTable.getLevel()+"\tCurrent Block's Element Count: "+symbolTable.getBlockElementCount(symbolTable.getLevel()));
+								symbolTable.printIdTables();
 							}
 							else {
 								System.out.println("FAILED TO ADD IDENTIFIER: \"" + lexeme + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");

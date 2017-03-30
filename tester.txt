@@ -1,0 +1,36 @@
+@(foo, int, (x|int) { // declare foo function
+	:(x); // print x
+	<-(x); // return x
+});
+
+@(bar, non, (func|fn, x|int) {
+      // call func
+      func(x);
+});
+
+@(main, non, (args|str) { // declare main function
+	// (almost) everything IS a function
+	// still an imperative language
+
+      :("Hello World!"); // print Hello World!
+
+	#(x, int); // declare x as int
+	->(x); // get input, save to x
+
+      bar(foo, x); // call bar to call foo with argument x
+
+	=(x, +(x, 1)); // x = x + 1
+	++(x); // increment x by 1
+	--(x); // decrement x by 1
+
+	?(==(x, 2), {
+		// i am true
+	}, {
+		// i am false aka else
+	});
+
+	~(>=(x, 0), { // while(x >= 0)
+		// do something with loop
+		--(x);
+	});
+});
