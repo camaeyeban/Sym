@@ -46,8 +46,17 @@ public class Recognizer {
 					else if(g.getSymbol().equals("IDENTIFIER")){
 						if( (! Arrays.asList(Meta.RESERVED_FUNCTION_NAMES).contains(lexeme)) &&
 						(! Arrays.asList(Meta.DELIMITERS).contains(lexeme)) ){
-							symbolTable.install(lexeme, symbolTable.getLevel());
-							System.out.println("ADDED IDENTIFIER: "+lexeme+"\tBlock Level: "+symbolTable.getLevel()+"\tCurrent Block's Element Count: "+symbolTable.getBlockElementCount(symbolTable.getLevel()));
+							System.out.println();
+							IdEntry symbolToAdd = symbolTable.idLookup(lexeme, 0);
+
+							// check if identifier doesn't exist in the symbol table
+							if(symbolToAdd == null) {
+								symbolTable.install(lexeme, symbolTable.getLevel());
+								System.out.println("ADDED IDENTIFIER: "+lexeme+"\tBlock Level: "+symbolTable.getLevel()+"\tCurrent Block's Element Count: "+symbolTable.getBlockElementCount(symbolTable.getLevel()));
+							}
+							else {
+								System.out.println("FAILED TO ADD IDENTIFIER: \"" + lexeme + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
+							}
 						}
 					}
 				}

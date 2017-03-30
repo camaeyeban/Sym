@@ -61,6 +61,14 @@ public class SymbolTable {
 
 
 	public IdEntry idLookup(String name, int blockLevel){
+		if(blockLevel == 0 && idTables.size() > 0) {
+			for(int i = 1; i < idTables.size(); i++) {
+				IdEntry id = idLookup(name, i);
+
+				if(id != null) return id;
+			}
+		}
+
 		if(this.idTables.get(blockLevel).containsKey(name)){
 			return this.idTables.get(blockLevel).get(name);
 		}
