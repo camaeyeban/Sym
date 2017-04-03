@@ -1,9 +1,3 @@
-/*
-    @TODOs:
-
-	Skip comments
-*/
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,9 +120,9 @@ public class LexicalAnalyzer {
             }
         }
 
-		System.out.println("\n------------------- LEXICAL ANALYZER ------------------\n");
+		System.out.println("\n----------------------------- LEXICAL ANALYZER ----------------------------\n");
         System.out.println(tokens);
-        System.out.println("\n--------------- END OF LEXICAL ANALYZER ---------------\n");
+        System.out.println("\n------------------------- END OF LEXICAL ANALYZER -------------------------\n");
 		
         return tokens;
     }

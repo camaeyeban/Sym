@@ -10,15 +10,18 @@ public class Recognizer {
 	private Stack<GrammarSymbol> grammarSymbols = new Stack<GrammarSymbol>();
 	private ParseTable parseTable = new ParseTable();
 	private SymbolTable symbolTable = new SymbolTable();
+	private TreeNode concreteTree;
 	
-    public Recognizer(ArrayList<Token> tokens) {
+    public Recognizer(ArrayList<Token> tokens, TreeNode concreteTree) {
 		this.tokens = tokens;
 		this.tokens.add(new Token());
 		this.grammarSymbols.push(new GrammarSymbol("$", 0));
 		this.grammarSymbols.push(new GrammarSymbol("Statements", 0));
+		this.concreteTree = concreteTree;
 	}
 	
 	public String recognize(){
+		TreeNode currentNode = this.concreteTree;
 		for(int i=0; i<this.tokens.size(); ) {
 			String tokenName = tokens.get(i).getType();
 			String lexeme = tokens.get(i).getLexeme();
@@ -34,19 +37,27 @@ public class Recognizer {
 				if(tos.getSymbol().equals(tokenName)){
 					GrammarSymbol g = grammarSymbols.pop();
 					i++;
-					System.out.println(repeat("  ", g.getIndent()) + g.getSymbol());
+					
+					// creating new node then adding it to the concrete tree
+					TreeNode child = new TreeNode(lexeme, g.getSymbol(), g.getIndent()+1);
+					while(child.getDepth()-1 < currentNode.getDepth()){
+						currentNode = currentNode.getParent();
+					}
+					child.setParent(currentNode);
+					currentNode.addChild(child);
+					
+					// updating pointer
+					currentNode = child;
+					
 					if(g.getSymbol().equals("CODE_DELIMITER_LEFT")){
 						symbolTable.enterBlock();
-						System.out.println("ENTERED BLOCK. CURRENT BLOCK LEVEL: "+symbolTable.getLevel());
 					}
 					else if(g.getSymbol().equals("CODE_DELIMITER_RIGHT")){
 						symbolTable.leaveBlock();
-						System.out.println("LEFT BLOCK. CURRENT BLOCK LEVEL: "+symbolTable.getLevel());
 					}
 					else if(g.getSymbol().equals("IDENTIFIER")){
 						if( (! Arrays.asList(Meta.RESERVED_FUNCTION_NAMES).contains(lexeme)) &&
 						(! Arrays.asList(Meta.DELIMITERS).contains(lexeme)) ){
-							System.out.println();
 							IdEntry symbolToAdd = symbolTable.idLookup(lexeme, 0);
 
 							// check if identifier doesn't exist in the symbol table
@@ -79,7 +90,16 @@ public class Recognizer {
 					GrammarSymbol g = grammarSymbols.pop();
 					String entries[] = production.split("<|>|-| ", -1);
 
-					System.out.println(repeat("  ", g.getIndent()) + g.getSymbol());
+					// creating new node then adding it to the concrete tree
+					TreeNode child = new TreeNode(lexeme, g.getSymbol(), g.getIndent()+1);
+					while(child.getDepth()-1 < currentNode.getDepth()){
+						currentNode = currentNode.getParent();
+					}
+					child.setParent(currentNode);
+					currentNode.addChild(child);
+					
+					// updating terminal
+					currentNode = child;
 					
 					for(int j=entries.length-1; j>0; j--){
 						if(entries[j].length() > 0){

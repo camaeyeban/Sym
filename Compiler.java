@@ -14,9 +14,9 @@ public class Compiler {
 
 	public void compile(){
         String fileContent = this.readFile();
-		System.out.println("\n--------------------- FILE CONTENT --------------------\n");
+		System.out.println("\n------------------------------- FILE CONTENT ------------------------------\n");
 		System.out.println(fileContent);
-		System.out.println("\n----------------- END OF FILE CONTENT -----------------\n");
+		System.out.println("\n--------------------------- END OF FILE CONTENT ---------------------------\n");
 
 
 		LexicalAnalyzer lex = new LexicalAnalyzer(fileContent);
