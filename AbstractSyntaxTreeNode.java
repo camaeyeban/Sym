@@ -73,11 +73,36 @@ public class AbstractSyntaxTreeNode {
             }
             case "Data": {
                 if(tree.getChildren().size() > 1 && tree.getChild(1).getChildren().size() > 0) {
-                    if(tree.getChild(1).getChild(0).getLexemeClass().equals("Variable_DataType_Pair'")) {
+                    TreeNode lookahead = tree.getChild(1).getChild(0);
+                    
+                    if(lookahead.getLexemeClass().equals("Variable_DataType_Pair'")) {
                         this.lexemeClass = "DATA_TYPE_PAIR_NODE";
 
                         this.children.add(new AbstractSyntaxTreeNode(tree.getChild(0) ,this));
-                        this.children.add(new AbstractSyntaxTreeNode(tree.getChild(1).getChild(0).getChild(1) ,this));
+                        this.children.add(new AbstractSyntaxTreeNode(lookahead.getChild(1) ,this));
+                    }
+                    else if(lookahead.getLexemeClass().equals("Statement_Without_Delimiter'")) {
+                        this.lexeme = tree.getChild(0).getLexeme();
+
+                        if(Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(this.lexeme) != null) {
+                            this.lexemeClass = Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(this.lexeme);
+                        }
+                        else {
+                            this.lexemeClass = "FUNCTION_CALL";
+                        }
+
+                        TreeNode p = tree.getChild(1).getChild(0).getChild(1).getChild(0);
+
+                        while(p.getChildren().size() > 0) {
+                            children.add(new AbstractSyntaxTreeNode(p, this));
+
+                            if(p.getChild(1).getChildren().size() > 0) {
+                                p = p.getChild(1).getChild(1);
+                            }
+                            else {
+                                break;
+                            }
+                        }
                     }
                 }
                 else {
@@ -123,7 +148,12 @@ public class AbstractSyntaxTreeNode {
 
                 break;
             }
-            // @TODO: other productions
+            case "INTEGER_LITERAL": {
+                this.lexemeClass = tree.getLexemeClass();
+                this.lexeme = tree.getLexeme();
+
+                break;
+            }
             default: {
                 System.out.println("!: " + tree.getLexemeClass());
             }
