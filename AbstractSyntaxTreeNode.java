@@ -32,6 +32,13 @@ public class AbstractSyntaxTreeNode {
 
         switch(tree.getLexemeClass()) {
             case "Statements": {
+                TreeNode p = tree;
+
+                while(p.getChildren().size() > 0) {
+                    children.add(new AbstractSyntaxTreeNode(p.getChild(0), this));
+                    p = p.getChild(1);
+                }
+
                 break;
             }
             case "Statement": {
@@ -65,10 +72,55 @@ public class AbstractSyntaxTreeNode {
                 break;
             }
             case "Data": {
-                this.lexeme = tree.getChild(0).getLexeme();
-                this.lexemeClass = tree.getChild(0).getLexemeClass();
+                if(tree.getChildren().size() > 1 && tree.getChild(1).getChildren().size() > 0) {
+                    if(tree.getChild(1).getChild(0).getLexemeClass().equals("Variable_DataType_Pair'")) {
+                        this.lexemeClass = "DATA_TYPE_PAIR_NODE";
 
-                // @TODO: catch all cases
+                        this.children.add(new AbstractSyntaxTreeNode(tree.getChild(0) ,this));
+                        this.children.add(new AbstractSyntaxTreeNode(tree.getChild(1).getChild(0).getChild(1) ,this));
+                    }
+                }
+                else {
+                    this.init(tree.getChild(0), parent);
+                }
+
+                break;
+            }
+            case "IDENTIFIER": {
+                this.lexeme = tree.getLexeme();
+                this.lexemeClass = tree.getLexemeClass();
+
+                break;
+            }
+            case "DATA_TYPE": {
+                this.lexeme = tree.getLexeme();
+                this.lexemeClass = tree.getLexemeClass();
+                
+                break;
+            }
+            case "Anonymous_Function_Block": {
+                this.lexeme = null;
+                this.lexemeClass = tree.getLexemeClass().toUpperCase();
+
+                // arguments
+                children.add(new AbstractSyntaxTreeNode(tree.getChild(0).getChild(1).getChild(0), this));
+
+                // code block
+                children.add(new AbstractSyntaxTreeNode(tree.getChild(1), this));
+
+                break;
+            }
+            case "Code_Block": {
+                this.lexemeClass = "CODE_BLOCK";
+                
+                this.init(tree.getChild(1), parent);
+
+                break;
+            }
+            case "String": {
+                this.lexemeClass = tree.getLexemeClass();
+                this.lexeme = tree.getChild(1).getLexeme();
+
                 break;
             }
             // @TODO: other productions
@@ -91,7 +143,8 @@ public class AbstractSyntaxTreeNode {
     }
 
     public void printTree() {
-        System.out.println(repeat("  ", this.getDepth()) + this.getLexemeClass() + " (" + this.getLexeme() + ")");
+        // System.out.println(repeat("  ", this.getDepth()) + this.getLexemeClass() + " (" + this.getLexeme() + ")");
+        System.out.println(repeat("  ", this.getDepth()) + (this.getLexeme() != null ? (this.getLexeme() + " (" + this.getLexemeClass() + ")") : this.getLexemeClass()));
 
         for(int i = 0; i < children.size(); i++) {
             children.get(i).printTree();
