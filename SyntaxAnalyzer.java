@@ -5,6 +5,7 @@ public class SyntaxAnalyzer {
 	
 	private ArrayList<Token> tokens = new ArrayList<Token>();
 	private TreeNode concreteTree = new TreeNode("", "", 0);
+	private AbstractSyntaxTreeNode ast;
 	
     public SyntaxAnalyzer(ArrayList<Token> tokens) {
 		this.tokens = tokens;
@@ -29,6 +30,11 @@ public class SyntaxAnalyzer {
 		System.out.println("\n ~ ~ ~ ~ ~ -------------------- CONCRETE TREE ------------------ ~ ~ ~ ~ ~ \n");
 		TreeNode.printTree(concreteTree, counter);
         System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF CONCRETE TREE --------------- ~ ~ ~ ~ ~ \n");
+
+		System.out.println("\n ~ ~ ~ ~ ~ -------------------- AST ------------------ ~ ~ ~ ~ ~ \n");
+		ast = new AbstractSyntaxTreeNode(concreteTree);
+		ast.printTree();
+        System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF AST --------------- ~ ~ ~ ~ ~ \n");
 		
 		
         System.out.println("\n-------------------------- END OF SYNTAX ANALYZER -------------------------\n");

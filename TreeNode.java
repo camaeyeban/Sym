@@ -36,6 +36,10 @@ public class TreeNode {
 	public LinkedList<TreeNode> getChildren(){
 		return this.children;
 	}
+
+	public TreeNode getChild(int i) {
+		return this.children.get(i);
+	}
 	
 	public void setParent(TreeNode parent){
 		this.parent = parent;
@@ -59,7 +63,7 @@ public class TreeNode {
 		counter.push(i+1);
 		ptr = ptr.getChildren().get(i);
 		counter.push(0);
-		System.out.println(repeat("  ", ptr.getDepth()) + ptr.getLexemeClass());
+		System.out.println(repeat("  ", ptr.getDepth()) + ptr.getLexemeClass() + " (" + ptr.getLexeme() + ")");
 		
 		printTree(ptr, counter);
 	}
