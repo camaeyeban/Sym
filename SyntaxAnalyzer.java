@@ -4,6 +4,7 @@ import java.util.Stack;
 public class SyntaxAnalyzer {
 	
 	private ArrayList<Token> tokens = new ArrayList<Token>();
+	private SymbolTable symbolTable = new SymbolTable();
 	private TreeNode concreteTree = new TreeNode("", "", 0);
 	private AbstractSyntaxTreeNode ast;
 	
@@ -36,6 +37,11 @@ public class SyntaxAnalyzer {
 		ast.printTree();
         System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF AST --------------- ~ ~ ~ ~ ~ \n");
 		
+		System.out.println("\n ~ ~ ~ ~ ~ -------------------- SYMBOL TABLE ------------------- ~ ~ ~ ~ ~ \n");
+		symbolTable.create(ast);
+        System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF SYMBOL TABLE ---------------- ~ ~ ~ ~ ~ \n");
+		
+
 		
         System.out.println("\n-------------------------- END OF SYNTAX ANALYZER -------------------------\n");
 	}

@@ -172,6 +172,10 @@ public class AbstractSyntaxTreeNode {
         return this.depth;
     }
 
+    public LinkedList<AbstractSyntaxTreeNode> getChildren(){
+        return this.children;
+    }
+
     public void printTree() {
         // System.out.println(repeat("  ", this.getDepth()) + this.getLexemeClass() + " (" + this.getLexeme() + ")");
         System.out.println(repeat("  ", this.getDepth()) + (this.getLexeme() != null ? (this.getLexeme() + " (" + this.getLexemeClass() + ")") : this.getLexemeClass()));
