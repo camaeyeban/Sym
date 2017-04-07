@@ -11,7 +11,7 @@ public class LexicalAnalyzer {
         this.fileContents = fileContents;
     }
 
-    private Keyword getKeyword(String fileContents) {
+    private Keyword getKeyword(String fileContents, int lineNumber) {
         String tokenBuffer = "";
         int i = 0;
         int escaped = 0;
@@ -28,7 +28,7 @@ public class LexicalAnalyzer {
             i++;
         }
 
-        return new Keyword(new Token(TypeAnalyzer.identify(tokenBuffer), tokenBuffer), i);
+        return new Keyword(new Token(TypeAnalyzer.identify(tokenBuffer), tokenBuffer, lineNumber), i);
     }
 
     private void clearComments() {
@@ -38,8 +38,6 @@ public class LexicalAnalyzer {
             .collect(Collectors.toList());
 
         fileContents = joinString(mappedContent.toArray(new String[mappedContent.size()]), "\n");
-
-        
     }
 
     private String removeComment(String s) {
@@ -49,49 +47,55 @@ public class LexicalAnalyzer {
     public ArrayList<Token> generateLexemes() {
         ArrayList<Token> tokens = new ArrayList<Token>();
         boolean stringFlag = false;
+		int lineNumber = 0;
 
         clearComments();
 
         for(int i = 0; i < fileContents.length();) {
-            switch(fileContents.charAt(i)) {   
+            switch(fileContents.charAt(i)) {
+				case '\n':{
+					lineNumber++;
+					i++;
+					break;
+				}
                 case '(': {
-                    tokens.add(new Token("FUNCTION_DELIMITER_LEFT", "("));
+                    tokens.add(new Token("FUNCTION_DELIMITER_LEFT", "(", lineNumber));
                     i++;
                     break;
                 }
                 case ')': {
-                    tokens.add(new Token("FUNCTION_DELIMITER_RIGHT", ")"));
+                    tokens.add(new Token("FUNCTION_DELIMITER_RIGHT", ")", lineNumber));
                     i++;
                     break;
                 }
                 case '{': {
-                    tokens.add(new Token("CODE_DELIMITER_LEFT", "{"));
+                    tokens.add(new Token("CODE_DELIMITER_LEFT", "{", lineNumber));
                     i++;
                     break;
                 }
                 case '}': {
-                    tokens.add(new Token("CODE_DELIMITER_RIGHT", "}"));
+                    tokens.add(new Token("CODE_DELIMITER_RIGHT", "}", lineNumber));
                     i++;
                     break;
                 }
                 case '"': {
-                    tokens.add(new Token("STRING_DELIMITER", "\""));
+                    tokens.add(new Token("STRING_DELIMITER", "\"", lineNumber));
                     stringFlag = !stringFlag;
                     i++;
                     break;
                 }
                 case '|': {
-                    tokens.add(new Token("DATA_TYPE_DELIMITER", "|"));
+                    tokens.add(new Token("DATA_TYPE_DELIMITER", "|", lineNumber));
                     i++;
                     break;
                 }
                 case ';': {
-                    tokens.add(new Token("STATEMENT_DELIMITER", ";"));
+                    tokens.add(new Token("STATEMENT_DELIMITER", ";", lineNumber));
                     i++;
                     break;
                 }
                 case ',': {
-                    tokens.add(new Token("ARGUMENT_DELIMITER", ","));
+                    tokens.add(new Token("ARGUMENT_DELIMITER", ",", lineNumber));
                     i++;
                     break;
                 }
@@ -102,16 +106,16 @@ public class LexicalAnalyzer {
                     }
 
                     if (stringFlag) {
-                        Keyword word = getKeyword(fileContents.substring(i));
+                        Keyword word = getKeyword(fileContents.substring(i), lineNumber);
 
-                        tokens.add(new Token("STRING_LITERAL", word.getToken().getLexeme()));
+                        tokens.add(new Token("STRING_LITERAL", word.getToken().getLexeme(), lineNumber));
 
                         i += word.getLength();
 
                         break;
                     }
 
-                    Keyword keyword = getKeyword(fileContents.substring(i));
+                    Keyword keyword = getKeyword(fileContents.substring(i), lineNumber);
 
                     tokens.add(keyword.getToken());
 
