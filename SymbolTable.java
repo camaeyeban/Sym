@@ -92,9 +92,12 @@ public class SymbolTable {
 			}
 		}
 
-		if(this.idTables.get(blockLevel).containsKey(name)){
-			return this.idTables.get(blockLevel).get(name);
+		if(this.idTables.get(blockLevel) != null) {
+			if(this.idTables.get(blockLevel).containsKey(name)){
+				return this.idTables.get(blockLevel).get(name);
+			}
 		}
+		
 		return null;
 	}
 
@@ -128,41 +131,146 @@ public class SymbolTable {
         	codeBlockLevel.pop();
         }
 
-        if(ast.getLexeme() != null && ast.getLexeme().equals("#")){
-        	IdEntry symbolToAdd = null;
-        	if(this.idLookup(ast.getChildren().get(0).getLexeme(), 1) == null){
-        		symbolToAdd = this.idLookup(ast.getChildren().get(0).getLexeme(), this.getLevel());
-        	}
-        	if(symbolToAdd == null) {
-				this.install(ast.getChildren().get(0).getLexeme(), this.getLevel(), ast.getChildren().get(1).getLexeme());
-				System.out.println("ADDED IDENTIFIER: "+ast.getChildren().get(0).getLexeme()+"\tBlock Level: "+this.getLevel()+"\tData Type: "+ast.getChildren().get(1).getLexeme());
-				this.printIdTables();
+		if(ast.getLexemeClass() != null) {
+			// data type checking
+			// @TODO: move this code somewhere not in symbol table
+
+			checkValidDataType(ast);
+
+			if(ast.getLexemeClass().equals("DECLARATION")){
+				IdEntry symbolToAdd = null;
+				if(this.idLookup(ast.getChildren().get(0).getLexeme(), 1) == null){
+					symbolToAdd = this.idLookup(ast.getChildren().get(0).getLexeme(), this.getLevel());
+				}
+				if(symbolToAdd == null) {
+					this.install(ast.getChildren().get(0).getLexeme(), this.getLevel(), ast.getChildren().get(1).getLexeme());
+					System.out.println("ADDED IDENTIFIER: "+ast.getChildren().get(0).getLexeme()+"\tBlock Level: "+this.getLevel()+"\tData Type: "+ast.getChildren().get(1).getLexeme());
+					this.printIdTables();
+				}
+				else {
+					System.out.println("FAILED TO ADD IDENTIFIER: \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
+				}
 			}
-			else {
-				System.out.println("FAILED TO ADD IDENTIFIER: \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
+			else if(ast.getLexemeClass().equals("FUNCTION_DECLARATION")){
+				IdEntry symbolToAdd = null;
+				if(this.idLookup(ast.getChildren().get(0).getLexeme(), 1) == null){
+					symbolToAdd = this.idLookup(ast.getChildren().get(0).getLexeme(), this.getLevel());
+				}
+				if(symbolToAdd == null) {
+					this.install(ast.getChildren().get(0).getLexeme(), this.getLevel(), ast.getChildren().get(1).getLexeme());
+					System.out.println("ADDED FUNCTION: "+ast.getChildren().get(0).getLexeme()+"\tBlock Level: "+this.getLevel()+"\tData Type: "+ast.getChildren().get(1).getLexeme());
+					this.printIdTables();
+				}
+				else {
+					System.out.println("FAILED TO ADD IDENTIFIER: \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
+				}
 			}
-        }
-        else if(ast.getLexeme() != null && ast.getLexeme().equals("@")){
-        	IdEntry symbolToAdd = null;
-        	if(this.idLookup(ast.getChildren().get(0).getLexeme(), 1) == null){
-        		symbolToAdd = this.idLookup(ast.getChildren().get(0).getLexeme(), this.getLevel());
-        	}
-        	if(symbolToAdd == null) {
-				this.install(ast.getChildren().get(0).getLexeme(), this.getLevel(), ast.getChildren().get(1).getLexeme());
-				System.out.println("ADDED FUNCTION: "+ast.getChildren().get(0).getLexeme()+"\tBlock Level: "+this.getLevel()+"\tData Type: "+ast.getChildren().get(1).getLexeme());
-				this.printIdTables();
+			else if(ast.getLexemeClass().equals("CODE_BLOCK")){
+				this.enterBlock();
+				codeBlockLevel.push(ast.getDepth());
 			}
-			else {
-				System.out.println("FAILED TO ADD IDENTIFIER: \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
-			}
-        }
-        else if(ast.getLexemeClass() != null && ast.getLexemeClass().equals("CODE_BLOCK")){
-        	this.enterBlock();
-        	codeBlockLevel.push(ast.getDepth());
-        }
+			
+		}
 
         for(int i = 0; i < ast.getChildren().size(); i++) {
             create(ast.getChildren().get(i));
         }
+	}
+
+	private boolean checkValidDataType(AbstractSyntaxTreeNode node) {
+		String functionName = node.getLexeme();
+		boolean isValid = true;
+
+		// check if function name is reserved
+		if(Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(functionName) != null) {
+			ReservedFunctionsIdentifierDataTypePair functionInfo = Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(functionName);
+
+			// check if assignment Operator
+			if(node.getLexemeClass().equals("ASSIGNMENT")) {
+				isValid = expect(node.getChild(0), DataTypes.IDENTIFIER, functionName, 0);
+				isValid = isValid && expect(node.getChild(1), this.getDataType(node.getChild(0)), functionName, 1);
+			}
+			else {
+				// get expected data types for each props
+				String[] argsDataType = functionInfo.getArgsDataType();
+				for(int i = 0; i < argsDataType.length; i++) {
+					String expectedDataType = argsDataType[i];
+
+					if(expectedDataType == DataTypes.ANY) {
+						continue;
+					}
+
+					if(!expect(node.getChild(i), expectedDataType, functionName, i)) {
+						isValid = false;
+					}
+				}
+			}
+		}
+		// it might be user declared
+		else {
+			// @TODO
+		}
+
+		return isValid;
+	}
+
+	private String getDataType(AbstractSyntaxTreeNode node) {
+		String lexeme = node.getLexeme();
+		String lexemeClass = node.getLexemeClass();
+
+		if(lexeme != null) {
+			// check if data type
+			if(DataTypes.LIST.contains(lexeme)) {
+				return DataTypes.DATA_TYPE;
+			}
+			// check if function name is reserved
+			else if(Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(lexeme) != null) {
+				ReservedFunctionsIdentifierDataTypePair functionInfo = Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(lexeme);
+				
+				return functionInfo.getDataType();
+			}
+			// it might be user declared
+			else if(this.idLookup(lexeme, 0) != null) {
+				return this.idLookup(lexeme, 0).getDataType();
+			}
+			else if(lexemeClass.equals("String")) {
+				return DataTypes.STR;
+			}
+			// int literal
+			else if(lexemeClass.equals("INTEGER_LITERAL")) {
+				return DataTypes.INT;
+			}
+			// float literal
+			else if(lexemeClass.equals("FLOAT_LITERAL")) {
+				return DataTypes.FLT;
+			}
+			// boolean literal
+			else if(lexemeClass.equals("BOOLEAN_LITERAL")) {
+				return DataTypes.BLN;
+			}
+		}
+
+		if(node.getLexemeClass().equals("ANONYMOUS_FUNCTION_BLOCK")) {
+			return DataTypes.FN;
+		}
+		
+		// might be an uninitialized identifier
+		return DataTypes.IDENTIFIER_UNINITIALIZED;
+	}
+	private boolean expect(AbstractSyntaxTreeNode node, String expectedDataType, String functionName, int i) {
+		boolean result;
+
+		if(expectedDataType.equals(DataTypes.IDENTIFIER)) {
+			result = this.idLookup(node.getLexeme(), 0) != null;
+		}
+		else {
+			result = this.getDataType(node).equals(expectedDataType);
+		}
+
+		if(!result) {
+			System.out.println("Error: expected " + expectedDataType + " for function " + functionName + " argument " + (i + 1) + ", got " + this.getDataType(node) + ".");
+		}
+
+		return result;
 	}
 }

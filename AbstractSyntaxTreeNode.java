@@ -149,6 +149,10 @@ public class AbstractSyntaxTreeNode {
                 break;
             }
             case "INTEGER_LITERAL": {
+            }
+            case "FLOAT_LITERAL": {
+            }
+            case "BOOLEAN_LITERAL": {
                 this.lexemeClass = tree.getLexemeClass();
                 this.lexeme = tree.getLexeme();
 
@@ -174,6 +178,10 @@ public class AbstractSyntaxTreeNode {
 
     public LinkedList<AbstractSyntaxTreeNode> getChildren(){
         return this.children;
+    }
+
+    public AbstractSyntaxTreeNode getChild(int i) {
+        return this.children.get(i);
     }
 
     public void printTree() {
