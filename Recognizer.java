@@ -9,7 +9,6 @@ public class Recognizer {
 	private ArrayList<Token> tokens = new ArrayList<Token>();
 	private Stack<GrammarSymbol> grammarSymbols = new Stack<GrammarSymbol>();
 	private ParseTable parseTable = new ParseTable();
-	private SymbolTable symbolTable = new SymbolTable();
 	private TreeNode concreteTree;
 	
     public Recognizer(ArrayList<Token> tokens, TreeNode concreteTree) {
@@ -48,29 +47,6 @@ public class Recognizer {
 					
 					// updating pointer
 					currentNode = child;
-					
-					if(g.getSymbol().equals("CODE_DELIMITER_LEFT")){
-						symbolTable.enterBlock();
-					}
-					else if(g.getSymbol().equals("CODE_DELIMITER_RIGHT")){
-						symbolTable.leaveBlock();
-					}
-					else if(g.getSymbol().equals("IDENTIFIER")){
-						if( (! Arrays.asList(Meta.RESERVED_FUNCTION_NAMES).contains(lexeme)) &&
-						(! Arrays.asList(Meta.DELIMITERS).contains(lexeme)) ){
-							IdEntry symbolToAdd = symbolTable.idLookup(lexeme, 0);
-
-							// check if identifier doesn't exist in the symbol table
-							if(symbolToAdd == null) {
-								symbolTable.install(lexeme, symbolTable.getLevel());
-								System.out.println("ADDED IDENTIFIER: "+lexeme+"\tBlock Level: "+symbolTable.getLevel()+"\tCurrent Block's Element Count: "+symbolTable.getBlockElementCount(symbolTable.getLevel()));
-								symbolTable.printIdTables();
-							}
-							else {
-								System.out.println("FAILED TO ADD IDENTIFIER: \"" + lexeme + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
-							}
-						}
-					}
 				}
 				else{
 					return "REJECTED due to mismatch of current token and top of stack";
