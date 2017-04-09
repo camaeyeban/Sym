@@ -45,7 +45,7 @@ public class AbstractSyntaxTreeNode {
                 this.lexeme = tree.getChild(0).getChild(0).getLexeme();
 
                 if(Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(this.lexeme) != null) {
-                    this.lexemeClass = Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(this.lexeme);
+                    this.lexemeClass = Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(this.lexeme).getIdentifier();
                 }
                 else {
                     this.lexemeClass = "FUNCTION_CALL";
@@ -85,7 +85,7 @@ public class AbstractSyntaxTreeNode {
                         this.lexeme = tree.getChild(0).getLexeme();
 
                         if(Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(this.lexeme) != null) {
-                            this.lexemeClass = Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(this.lexeme);
+                            this.lexemeClass = Meta.RESERVED_FUNCTIONS_LOOKUP_TABLE.get(this.lexeme).getIdentifier();
                         }
                         else {
                             this.lexemeClass = "FUNCTION_CALL";

@@ -39,31 +39,31 @@ public class Meta {
         '|'
     };
 
-    public static HashMap<String, String> RESERVED_FUNCTIONS_LOOKUP_TABLE = new HashMap<String, String>();
+    public static HashMap<String, ReservedFunctionsIdentifierDataTypePair> RESERVED_FUNCTIONS_LOOKUP_TABLE = new HashMap<String, ReservedFunctionsIdentifierDataTypePair>();
 
     static {
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("@", "FUNCTION_DECLARATION");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("->", "READ_INPUT");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put(":", "PRINT");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("#", "DECLARATION");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("?", "IF");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("~", "WHILE");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("++", "INCREMENT");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("--", "DECREMENT");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("<-", "RETURN");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("+", "ADD");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("-", "SUBTRACT");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("*", "MULTIPLY");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("/", "DIVIDE");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("%", "MODULO");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("=", "ASSIGNMENT");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("==", "EQUALS");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("<", "LESS THAN");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("<=", "LESS THAN OR EQUAL TO");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put(">", "GREATER THAN");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put(">=", "GREATER THAN OR EQUAL TO");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("!=", "NOT EQUAL TO");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("&&", "AND");
-        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("||", "OR");
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("@", new ReservedFunctionsIdentifierDataTypePair("FUNCTION_DECLARATION", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("->", new ReservedFunctionsIdentifierDataTypePair("READ_INPUT", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put(":", new ReservedFunctionsIdentifierDataTypePair("PRINT", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("#", new ReservedFunctionsIdentifierDataTypePair("DECLARATION", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("?", new ReservedFunctionsIdentifierDataTypePair("IF", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("~", new ReservedFunctionsIdentifierDataTypePair("WHILE", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("++", new ReservedFunctionsIdentifierDataTypePair("INCREMENT", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("--", new ReservedFunctionsIdentifierDataTypePair("DECREMENT", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("<-", new ReservedFunctionsIdentifierDataTypePair("RETURN", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("+", new ReservedFunctionsIdentifierDataTypePair("ADD", "int"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("-", new ReservedFunctionsIdentifierDataTypePair("SUBTRACT", "int"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("*", new ReservedFunctionsIdentifierDataTypePair("MULTIPLY", "int"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("/", new ReservedFunctionsIdentifierDataTypePair("DIVIDE", "int"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("%", new ReservedFunctionsIdentifierDataTypePair("MODULO", "int"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("=", new ReservedFunctionsIdentifierDataTypePair("ASSIGNMENT", "non"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("==", new ReservedFunctionsIdentifierDataTypePair("EQUALS", "bln"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("<", new ReservedFunctionsIdentifierDataTypePair("LESS THAN", "bln"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("<=", new ReservedFunctionsIdentifierDataTypePair("LESS THAN OR EQUAL TO", "bln"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put(">", new ReservedFunctionsIdentifierDataTypePair("GREATER THAN", "bln"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put(">=", new ReservedFunctionsIdentifierDataTypePair("GREATER THAN OR EQUAL TO", "bln"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("!=", new ReservedFunctionsIdentifierDataTypePair("NOT EQUAL TO", "bln"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("&&", new ReservedFunctionsIdentifierDataTypePair("AND", "bln"));
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("||", new ReservedFunctionsIdentifierDataTypePair("OR", "bln"));
     }
 }
