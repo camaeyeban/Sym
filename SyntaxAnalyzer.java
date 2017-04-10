@@ -4,12 +4,18 @@ import java.util.Stack;
 public class SyntaxAnalyzer {
 	
 	private ArrayList<Token> tokens = new ArrayList<Token>();
-	private SymbolTable symbolTable = new SymbolTable();
-	private TreeNode concreteTree = new TreeNode("", "", 0);
+	private SymbolTable symbolTable;
+	private TreeNode concreteTree = new TreeNode("", "", 0, -1);
 	private AbstractSyntaxTreeNode ast;
+	private int errorCount = 0;
 	
     public SyntaxAnalyzer(ArrayList<Token> tokens) {
 		this.tokens = tokens;
+		symbolTable = new SymbolTable(this.errorCount);
+	}
+	
+	public int getErrorCount(){
+		return this.errorCount;
 	}
 	
 	public void analyze(){
@@ -29,15 +35,15 @@ public class SyntaxAnalyzer {
 		TreeNode.printTree(concreteTree, counter);
         System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF CONCRETE TREE --------------- ~ ~ ~ ~ ~ \n");
 
-		System.out.println("\n ~ ~ ~ ~ ~ -------------------- AST ------------------ ~ ~ ~ ~ ~ \n");
+		System.out.println("\n ~ ~ ~ ~ ~ ------------------------- AST ----------------------- ~ ~ ~ ~ ~ \n");
 		ast = new AbstractSyntaxTreeNode(concreteTree);
 		ast.printTree();
-        System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF AST --------------- ~ ~ ~ ~ ~ \n");
+        System.out.println("\n ~ ~ ~ ~ ~ --------------------- END OF AST -------------------- ~ ~ ~ ~ ~ \n");
 		
 		System.out.println("\n ~ ~ ~ ~ ~ -------------------- SYMBOL TABLE ------------------- ~ ~ ~ ~ ~ \n");
 		symbolTable.create(ast);
         System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF SYMBOL TABLE ---------------- ~ ~ ~ ~ ~ \n");
-		
+		this.errorCount += symbolTable.getErrorCount();
 
 		
         System.out.println("\n-------------------------- END OF SYNTAX ANALYZER -------------------------\n");

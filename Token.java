@@ -12,13 +12,6 @@ public class Token {
         this.value = ValueConverter.convert(type);
     }
 	
-	public Token(){
-		this.type = "END_OF_FILE_MARKER";
-		this.lexeme = "$";
-		this.value = "";
-		this.lineNumber = -1;
-	}
-
     public String getValue() {
         return this.value;
     }

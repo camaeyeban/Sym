@@ -5,8 +5,9 @@ import java.util.ArrayList;
 
 public class Compiler {
 
-	String inputFile;
-    ArrayList<Token> tokens = new ArrayList<Token>();
+	private String inputFile;
+    private ArrayList<Token> tokens = new ArrayList<Token>();
+	private int errorCount = 0;
 
 	Compiler(String inputFile){
 		this.inputFile = inputFile;
@@ -14,6 +15,8 @@ public class Compiler {
 
 	public void compile(){
         String fileContent = this.readFile();
+		fileContent = fileContent.concat("\n$");
+		
 		System.out.println("\n------------------------------- FILE CONTENT ------------------------------\n");
 		System.out.println(fileContent);
 		System.out.println("\n--------------------------- END OF FILE CONTENT ---------------------------\n");
@@ -24,6 +27,10 @@ public class Compiler {
 		
 		SyntaxAnalyzer syn = new SyntaxAnalyzer(tokens);
 		syn.analyze();
+		
+		errorCount += syn.getErrorCount();
+		System.out.println("\n***************************************************************************\n");
+		System.out.println("Found " + this.errorCount + " errors.");
 	}
 
     public String readFile(){

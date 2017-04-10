@@ -4,6 +4,7 @@ public class AbstractSyntaxTreeNode {
     private String lexeme;
 	private String lexemeClass;
     private int depth;
+	private int lineNumber;
     private AbstractSyntaxTreeNode parent;
     private LinkedList<AbstractSyntaxTreeNode> children = new LinkedList<AbstractSyntaxTreeNode>();
 
@@ -12,6 +13,7 @@ public class AbstractSyntaxTreeNode {
         this.lexeme = null;
         this.lexemeClass = "Start";
         this.depth = 0;
+		this.lineNumber = -1;
         this.parent = null;
 
         TreeNode p = tree.getChild(0);
@@ -29,6 +31,7 @@ public class AbstractSyntaxTreeNode {
     public void init(TreeNode tree, AbstractSyntaxTreeNode parent) {
         this.parent = parent;
         this.depth = parent.getDepth() + 1;
+		this.lineNumber = tree.getLineNumber();
 
         switch(tree.getLexemeClass()) {
             case "Statements": {
@@ -176,6 +179,10 @@ public class AbstractSyntaxTreeNode {
         return this.depth;
     }
 
+    public int getLineNumber() {
+        return this.lineNumber;
+    }
+	
     public LinkedList<AbstractSyntaxTreeNode> getChildren(){
         return this.children;
     }
@@ -186,7 +193,7 @@ public class AbstractSyntaxTreeNode {
 
     public void printTree() {
         // System.out.println(repeat("  ", this.getDepth()) + this.getLexemeClass() + " (" + this.getLexeme() + ")");
-        System.out.println(repeat("  ", this.getDepth()) + (this.getLexeme() != null ? (this.getLexeme() + " (" + this.getLexemeClass() + ")") : this.getLexemeClass()));
+        System.out.println(repeat("  ", this.getDepth()) + (this.getLexeme() != null ? (this.getLexeme() + " (" + this.getLexemeClass() + ")" + " at line " + this.getLineNumber()) : this.getLexemeClass()));
 
         for(int i = 0; i < children.size(); i++) {
             children.get(i).printTree();

@@ -99,6 +99,11 @@ public class LexicalAnalyzer {
                     i++;
                     break;
                 }
+                case '$': {
+                    tokens.add(new Token("END_OF_FILE_MARKER", "$", lineNumber));
+                    i++;
+                    break;
+                }
                 default: {
                     if (Character.isWhitespace(fileContents.charAt(i))) {
                         i++;

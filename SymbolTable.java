@@ -8,9 +8,11 @@ public class SymbolTable {
 	private LinkedList<Hashtable<String, IdEntry>> idTables = new LinkedList<Hashtable<String, IdEntry>>();
 	private int level = -1;
 	private Stack<Integer> codeBlockLevel = new Stack<Integer> ();
+	private int errorCount;
 	private int foundHash = 0;
 
-	SymbolTable(){
+	SymbolTable(int errorCount){
+		this.errorCount = errorCount;
 		init();
 	}
 
@@ -60,8 +62,7 @@ public class SymbolTable {
 	}
 	
 	public void installReservedSymbol(String key, String value){
-		IdEntry idEntry = new IdEntry(key, 1);
-		idEntry.setDataType(value);
+		IdEntry idEntry = new IdEntry(key, 1, value);
 		this.idTables.get(1).put(key, idEntry);
 	}
 	
@@ -71,17 +72,16 @@ public class SymbolTable {
 		this.level += 1;
 	}
 
-
-	public void leaveBlock(){
+	public void leaveBlock(int lineNumber){
 		if(this.level > 0){
 			this.idTables.removeLast();
 			this.level -= 1;
 		}
 		else{
-		System.out.println("Matching Error: Closing brace '}' has no matching open brace '{'.");
+			System.out.println("Error at line " + lineNumber + ": Close brace '}' has no matching open brace '{'.");
+			this.errorCount++;
 		}
 	}
-
 
 	public IdEntry idLookup(String name, int blockLevel){
 		if(blockLevel == 0 && idTables.size() > 0) {
@@ -101,16 +101,14 @@ public class SymbolTable {
 		return null;
 	}
 
-
 	public void install(String name, int blockLevel, String dataType){
 		IdEntry idEntry;
 		if(blockLevel > 0){
-			idEntry = new IdEntry(name, blockLevel);
+			idEntry = new IdEntry(name, blockLevel, dataType);
 		}
 		else{
-			idEntry = new IdEntry(name, this.level);
+			idEntry = new IdEntry(name, this.level, dataType);
 		}
-		idEntry.setDataType(dataType);
 		this.idTables.get(blockLevel).put(name, idEntry);
 	}
 
@@ -124,10 +122,14 @@ public class SymbolTable {
 	        }
 		}
 	}
-
+	
+	public int getErrorCount(){
+		return this.errorCount;
+	}
+	
 	public void create(AbstractSyntaxTreeNode ast){
 		if(!codeBlockLevel.empty() && codeBlockLevel.peek() > ast.getDepth()){
-        	this.leaveBlock();
+        	this.leaveBlock(ast.getLineNumber());
         	codeBlockLevel.pop();
         }
 
@@ -148,7 +150,8 @@ public class SymbolTable {
 					this.printIdTables();
 				}
 				else {
-					System.out.println("FAILED TO ADD IDENTIFIER: \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
+					System.out.println("Error at line " + ast.getChildren().get(0).getLineNumber() + ": Redeclaration of identifier \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
+					this.errorCount++;
 				}
 			}
 			else if(ast.getLexemeClass().equals("FUNCTION_DECLARATION")){
@@ -162,7 +165,8 @@ public class SymbolTable {
 					this.printIdTables();
 				}
 				else {
-					System.out.println("FAILED TO ADD IDENTIFIER: \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
+					System.out.println("Error at line " + ast.getChildren().get(0).getLineNumber() + ": Redeclaration of function identifier \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
+					this.errorCount++;
 				}
 			}
 			else if(ast.getLexemeClass().equals("CODE_BLOCK")){
@@ -257,6 +261,7 @@ public class SymbolTable {
 		// might be an uninitialized identifier
 		return DataTypes.IDENTIFIER_UNINITIALIZED;
 	}
+	
 	private boolean expect(AbstractSyntaxTreeNode node, String expectedDataType, String functionName, int i) {
 		boolean result;
 
@@ -268,7 +273,8 @@ public class SymbolTable {
 		}
 
 		if(!result) {
-			System.out.println("Error: expected " + expectedDataType + " for function " + functionName + " argument " + (i + 1) + ", got " + this.getDataType(node) + ".");
+			System.out.println("Error at line " + node.getLineNumber() + ": Expected " + expectedDataType + " for function " + functionName + " argument " + (i + 1) + ", got " + this.getDataType(node) + ".");
+			this.errorCount++;
 		}
 
 		return result;

@@ -6,19 +6,17 @@ public class TreeNode {
 	private String lexeme;
 	private String lexemeClass;
 	private int depth;
+	private int lineNumber;
 	private TreeNode parent;
 	private LinkedList<TreeNode> children;
 
-	TreeNode(String lexeme, String lexemeClass, int depth){
+	TreeNode(String lexeme, String lexemeClass, int depth, int lineNumber){
 		this.lexeme = lexeme;
 		this.lexemeClass = lexemeClass;
 		this.depth = depth;
+		this.lineNumber = lineNumber;
 		this.parent = null;
 		this.children = new LinkedList<TreeNode> ();
-	}
-	
-	public int getDepth(){
-		return this.depth;
 	}
 	
 	public String getLexeme(){
@@ -27,6 +25,14 @@ public class TreeNode {
 	
 	public String getLexemeClass(){
 		return this.lexemeClass;
+	}
+	
+	public int getDepth(){
+		return this.depth;
+	}
+	
+	public int getLineNumber(){
+		return this.lineNumber;
 	}
 	
 	public TreeNode getParent(){

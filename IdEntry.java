@@ -6,9 +6,10 @@ public class IdEntry {
 	private int scope;			// 0 = global, 1 = parameter, 2 = local
 	private int offset;
 
-	IdEntry(String name, int blockLevel){
+	IdEntry(String name, int blockLevel, String dataType){
 		this.name = name;
 		this.blockLevel = blockLevel;
+		this.dataType = dataType;
 	}
 
 	public String getName(){
@@ -31,10 +32,6 @@ public class IdEntry {
 		return this.offset;
 	}
 	
-	public void setDataType(String dataType){
-		this.dataType = dataType;
-	}
-
 	public void setScope(int scope){
 		this.scope = scope;
 	}

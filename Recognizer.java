@@ -2,8 +2,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
 
-// @TODO: store grammar tree in a data structure
-
 public class Recognizer {
 	
 	private ArrayList<Token> tokens = new ArrayList<Token>();
@@ -13,7 +11,6 @@ public class Recognizer {
 	
     public Recognizer(ArrayList<Token> tokens, TreeNode concreteTree) {
 		this.tokens = tokens;
-		this.tokens.add(new Token());
 		this.grammarSymbols.push(new GrammarSymbol("$", 0));
 		this.grammarSymbols.push(new GrammarSymbol("Statements", 0));
 		this.concreteTree = concreteTree;
@@ -24,6 +21,7 @@ public class Recognizer {
 		for(int i=0; i<this.tokens.size(); ) {
 			String tokenName = tokens.get(i).getType();
 			String lexeme = tokens.get(i).getLexeme();
+			int lineNumber = tokens.get(i).getLineNumber();
 			GrammarSymbol tos = grammarSymbols.peek(); // tos = top of stack
 			
 			// if TOS = epsilon
@@ -38,7 +36,7 @@ public class Recognizer {
 					i++;
 					
 					// creating new node then adding it to the concrete tree
-					TreeNode child = new TreeNode(lexeme, g.getSymbol(), g.getIndent()+1);
+					TreeNode child = new TreeNode(lexeme, g.getSymbol(), g.getIndent()+1, lineNumber);
 					while(child.getDepth()-1 < currentNode.getDepth()){
 						currentNode = currentNode.getParent();
 					}
@@ -67,7 +65,7 @@ public class Recognizer {
 					String entries[] = production.split("<|>|-| ", -1);
 
 					// creating new node then adding it to the concrete tree
-					TreeNode child = new TreeNode(lexeme, g.getSymbol(), g.getIndent()+1);
+					TreeNode child = new TreeNode(lexeme, g.getSymbol(), g.getIndent()+1, lineNumber);
 					while(child.getDepth()-1 < currentNode.getDepth()){
 						currentNode = currentNode.getParent();
 					}
@@ -96,9 +94,5 @@ public class Recognizer {
 			}
 		}
 		return "REJECTED due to absence of $";
-	}
-
-	private String repeat(String x, int n) {
-		return new String(new char[n]).replace("\0", x);
 	}
 }

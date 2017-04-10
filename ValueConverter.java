@@ -43,6 +43,9 @@ public class ValueConverter {
             case "ARGUMENT_DELIMITER": {
                 return "013";
             }
+            case "END_OF_FILE_MARKER": {
+                return "014";
+            }
         }
         return "UNKOWN";
     }
