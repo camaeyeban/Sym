@@ -10,6 +10,7 @@ public class SymbolTable {
 	private Stack<Integer> codeBlockLevel = new Stack<Integer> ();
 	private int errorCount;
 	private int foundHash = 0;
+	private int currentOffset = 0;
 
 	SymbolTable(int errorCount){
 		this.errorCount = errorCount;
@@ -109,7 +110,12 @@ public class SymbolTable {
 		else{
 			idEntry = new IdEntry(name, this.level, dataType);
 		}
+		
+		this.currentOffset += idEntry.getSize();
+		idEntry.setOffset(this.currentOffset);
+		
 		this.idTables.get(blockLevel).put(name, idEntry);
+		System.out.println("ADDED IDENTIFIER: "+name+"\tBlock Level: "+blockLevel+"\tData Type: "+dataType+"\tSize: "+idEntry.getSize()+"\tOffset: "+idEntry.getOffset());
 	}
 
 	public void printIdTables(){
@@ -134,7 +140,6 @@ public class SymbolTable {
         }
 
 		if(ast.getLexemeClass() != null) {
-			// data type checking
 			// @TODO: move this code somewhere not in symbol table
 
 			checkValidDataType(ast);
@@ -146,7 +151,6 @@ public class SymbolTable {
 				}
 				if(symbolToAdd == null) {
 					this.install(ast.getChildren().get(0).getLexeme(), this.getLevel(), ast.getChildren().get(1).getLexeme());
-					System.out.println("ADDED IDENTIFIER: "+ast.getChildren().get(0).getLexeme()+"\tBlock Level: "+this.getLevel()+"\tData Type: "+ast.getChildren().get(1).getLexeme());
 					this.printIdTables();
 				}
 				else {
@@ -161,7 +165,6 @@ public class SymbolTable {
 				}
 				if(symbolToAdd == null) {
 					this.install(ast.getChildren().get(0).getLexeme(), this.getLevel(), ast.getChildren().get(1).getLexeme());
-					System.out.println("ADDED FUNCTION: "+ast.getChildren().get(0).getLexeme()+"\tBlock Level: "+this.getLevel()+"\tData Type: "+ast.getChildren().get(1).getLexeme());
 					this.printIdTables();
 				}
 				else {
