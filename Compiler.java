@@ -26,11 +26,17 @@ public class Compiler {
 		tokens = lex.generateLexemes();
 		
 		SyntaxAnalyzer syn = new SyntaxAnalyzer(tokens);
-		syn.analyze();
+		AbstractSyntaxTreeNode ast = syn.analyze();
 		
 		errorCount += syn.getErrorCount();
 		System.out.println("\n***************************************************************************\n");
 		System.out.println("Found " + this.errorCount + " errors.");
+
+		// convert to intermediate representation
+		IRGenerator irGen = new IRGenerator(ast);
+
+		System.out.println("IR:");
+		System.out.println(irGen.generate().getTable());
 	}
 
     public String readFile(){

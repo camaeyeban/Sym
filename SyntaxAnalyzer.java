@@ -18,7 +18,7 @@ public class SyntaxAnalyzer {
 		return this.errorCount;
 	}
 	
-	public void analyze(){
+	public AbstractSyntaxTreeNode analyze(){
 		System.out.println("\n------------------------------ SYNTAX ANALYZER ----------------------------\n");
 		
 		
@@ -47,5 +47,7 @@ public class SyntaxAnalyzer {
 
 		
         System.out.println("\n-------------------------- END OF SYNTAX ANALYZER -------------------------\n");
+
+		return this.ast;
 	}
 }
