@@ -7,6 +7,8 @@ public class IRrowAssignment extends IRrow {
     private static int tempVariableIndex = 0;
 
     public IRrowAssignment(String op, String arg1, String arg2, String result) {
+        super();
+
         this.op = op;
         this.arg1 = arg1;
         this.arg2 = arg2;
@@ -26,9 +28,9 @@ public class IRrowAssignment extends IRrow {
     @Override
     public String toString() {
         if(this.arg2 != null) {
-            return "\n" + this.result + " = " + this.arg1 + " " + this.op + " " + this.arg2 + "\n"; 
+            return this.result + " = " + this.arg1 + " " + this.op + " " + this.arg2; 
         }
 
-        return "\n" + this.result + " = " + (this.op.equals("=") ? "": this.op + " ") + this.arg1 + "\n";
+        return super.toString() + this.result + " = " + (this.op.equals("=") ? "": this.op + " ") + this.arg1;
     }
 }

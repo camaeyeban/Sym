@@ -65,6 +65,12 @@ public class IRTable {
         return result;
     }
 
+    public void printTable() {
+        for(IRrow row: this.table) {
+            System.out.println(row);
+        }
+    }
+
     public ArrayList<IRrow> getTable() {
         return this.table;
     }

@@ -16,17 +16,17 @@ public class IRrowProcedure extends IRrow {
 
     @Override
     public String toString() {
-        String result = "";
+        String result = super.toString();
 
         for(int i = 0; i < paramCount; i++){
-            result += "\nparam " + params.get(i);
+            result += "param " + params.get(i);
         }
 
         if(this.retValue != null) {
-            result += "\n" + this.retValue + " = call " + this.name + ", " + this.paramCount + "\n"; 
+            result += this.retValue + " = call " + this.name + ", " + this.paramCount; 
         }
         else{
-            result += "\ncall " + this.name + ", " + this.paramCount + "\n"; 
+            result += "call " + this.name + ", " + this.paramCount; 
         }
 
         return result;

@@ -38,7 +38,7 @@ public class Compiler {
 		IRGenerator irGen = new IRGenerator(ast);
 
 		System.out.println("IR:");
-		System.out.println(irGen.generate().getTable());
+		irGen.generate().printTable();
 	}
 
     public String readFile(){
