@@ -40,6 +40,22 @@ public class IRTable {
         else if(node.getLexemeClass().equals("IDENTIFIER")) {
             result = node.getLexeme();
         }
+        else if(
+            node.getLexemeClass().equals("PRINT") ||
+            node.getLexemeClass().equals("DECLARATION") ||
+            node.getLexemeClass().equals("READ_INPUT") ||
+            node.getLexemeClass().equals("RETURN")
+        ) {
+            ArrayList<String> params = new ArrayList<String>();
+
+            for(int i = 0; i < node.getChildren().size(); i++){
+                params.add(node.getChild(i).getLexeme());
+            }
+
+            IRrowProcedure row = new IRrowProcedure(node.getLexeme(), null, params);
+
+            table.add(row);
+        }
         else {
             for(int i = 0; i < node.getChildren().size(); i++) {
                 this.add(node.getChild(i));
