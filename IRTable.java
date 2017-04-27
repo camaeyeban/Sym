@@ -9,12 +9,12 @@ public class IRTable {
         if(node.getLexemeClass().equals("ASSIGNMENT")) {
             result = node.getChild(0).getLexeme();
 
-            IRrow row = new IRrow(node.getLexeme(), this.add(node.getChild(1)), null, result);
+            IRrowAssignment row = new IRrowAssignment(node.getLexeme(), this.add(node.getChild(1)), null, result);
 
             table.add(row);
         }
         else if(node.getLexemeClass().equals("ADD") || node.getLexemeClass().equals("SUBTRACT") || node.getLexemeClass().equals("MULTIPLY") || node.getLexemeClass().equals("DIVIDE") || node.getLexemeClass().equals("MODULO")) {
-            IRrow row = new IRrow(node.getLexeme(), this.add(node.getChild(0)), this.add(node.getChild(1)), null);
+            IRrowAssignment row = new IRrowAssignment(node.getLexeme(), this.add(node.getChild(0)), this.add(node.getChild(1)), null);
 
             result = row.getResult();
 
@@ -25,7 +25,7 @@ public class IRTable {
             node.getLexemeClass().equals("DECREMENT") ||
             node.getLexemeClass().equals("NOT")
         ) {
-            IRrow row = new IRrow(node.getLexeme(), this.add(node.getChild(0)), null, null);
+            IRrowAssignment row = new IRrowAssignment(node.getLexeme(), this.add(node.getChild(0)), null, null);
 
             result = row.getResult();
 
