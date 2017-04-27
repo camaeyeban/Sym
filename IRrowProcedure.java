@@ -11,24 +11,20 @@ public class IRrowProcedure extends IRrow {
         this.retValue = retValue;
         this.params = params;
 
-        this.paramCount = params.size();
+        if(this.params != null){
+            this.paramCount = params.size();
+        }
+        else{
+            this.paramCount = 0;
+        }
     }
 
     @Override
     public String toString() {
-        String result = super.toString();
-
-        for(int i = 0; i < paramCount; i++){
-            result += "param " + params.get(i);
-        }
-
         if(this.retValue != null) {
-            result += this.retValue + " = call " + this.name + ", " + this.paramCount; 
-        }
-        else{
-            result += "call " + this.name + ", " + this.paramCount; 
+            return super.toString() + this.retValue + " = call " + this.name + ", " + this.paramCount; 
         }
 
-        return result;
+        return super.toString() + "call " + this.name + ", " + this.paramCount;
     }
 }

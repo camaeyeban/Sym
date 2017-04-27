@@ -87,6 +87,9 @@ public class IRTable {
 
             for(int i = 0; i < node.getChildren().size(); i++){
                 params.add(node.getChild(i).getLexeme());
+                
+                IRrowParameter row = new IRrowParameter(node.getChild(i).getLexeme());
+                table.add(row);
             }
 
             IRrowProcedure row = new IRrowProcedure(node.getLexeme(), null, params);
