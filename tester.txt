@@ -1,4 +1,7 @@
-
+@(foo, int, (x|int) { // declare foo function
+	:(x); // print x
+	<-(x); // return x
+});
 
 @(bar, non, (func|fn, x|int) {
       // call func
