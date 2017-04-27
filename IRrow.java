@@ -24,6 +24,10 @@ public class IRrow {
     }
 
     public String toString() {
-        return "\n{\n\top: " + this.op + ",\n\targ1: " + this.arg1 + ",\n\targ2: " + this.arg2 + ",\n\tres: " + this.result + "\n}";
+        if(this.arg2 != null) {
+            return "\n" + this.result + " = " + this.arg1 + " " + this.op + " " + this.arg2 + "\n"; 
+        }
+
+        return "\n" + this.result + " = " + (this.op != "=" ? this.op + " " : "") + this.arg1 + "\n";
     }
 }

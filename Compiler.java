@@ -32,6 +32,8 @@ public class Compiler {
 		System.out.println("\n***************************************************************************\n");
 		System.out.println("Found " + this.errorCount + " errors.");
 
+		if(errorCount > 0) return;
+
 		// convert to intermediate representation
 		IRGenerator irGen = new IRGenerator(ast);
 

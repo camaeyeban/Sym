@@ -14,5 +14,5 @@ public class DataTypes {
     public static String IDENTIFIER_UNINITIALIZED  = "identifierUninitialized";
     public static String DATA_TYPE  = "dataType";
 
-    public static List<String> LIST = Arrays.asList(DataTypes.INT, DataTypes.STR, DataTypes.NON, DataTypes.FN, DataTypes.IDENTIFIER, DataTypes.DATA_TYPE);
+    public static List<String> LIST = Arrays.asList(DataTypes.INT, DataTypes.STR, DataTypes.NON, DataTypes.FN, DataTypes.IDENTIFIER, DataTypes.DATA_TYPE, DataTypes.BLN);
 }

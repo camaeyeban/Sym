@@ -20,7 +20,24 @@ public class IRTable {
 
             table.add(row);
         }
+        else if(
+            node.getLexemeClass().equals("INCREMENT") ||
+            node.getLexemeClass().equals("DECREMENT") ||
+            node.getLexemeClass().equals("NOT")
+        ) {
+            IRrow row = new IRrow(node.getLexeme(), this.add(node.getChild(0)), null, null);
+
+            result = row.getResult();
+
+            table.add(row);
+        }
         else if(node.getLexemeClass().equals("INTEGER_LITERAL")) {
+            result = node.getLexeme();
+        }
+        else if(node.getLexemeClass().equals("FLOAT_LITERAL")) {
+            result = node.getLexeme();
+        }
+        else if(node.getLexemeClass().equals("IDENTIFIER")) {
             result = node.getLexeme();
         }
         else {

@@ -25,7 +25,8 @@ public class Meta {
         "=>",
         "!=",
         "&&",
-        "||"
+        "||",
+        "!"
     };
 
     public static char[] DELIMITERS = {
@@ -155,6 +156,11 @@ public class Meta {
         RESERVED_FUNCTIONS_LOOKUP_TABLE.put("||",
             new ReservedFunctionsIdentifierDataTypePair("OR", "bln", new String[] {
                 DataTypes.BLN, DataTypes.BLN
+            })
+        );
+        RESERVED_FUNCTIONS_LOOKUP_TABLE.put("!",
+            new ReservedFunctionsIdentifierDataTypePair("NOT", "bln", new String[] {
+                DataTypes.BLN
             })
         );
     }
