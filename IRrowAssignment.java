@@ -28,7 +28,7 @@ public class IRrowAssignment extends IRrow {
     @Override
     public String toString() {
         if(this.arg2 != null) {
-            return this.result + " = " + this.arg1 + " " + this.op + " " + this.arg2; 
+            return super.toString() + this.result + " = " + this.arg1 + " " + this.op + " " + this.arg2; 
         }
 
         return super.toString() + this.result + " = " + (this.op.equals("=") ? "": this.op + " ") + this.arg1;
