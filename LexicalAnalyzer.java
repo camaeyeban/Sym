@@ -16,7 +16,7 @@ public class LexicalAnalyzer {
         int i = 0;
         int escaped = 0;
 
-        while(!isDelimiter(fileContents.charAt(i)) || escaped == 1) {
+        while((!isDelimiter(fileContents.charAt(i)) || escaped == 1) || (fileContents.charAt(i) == '|' && (fileContents.charAt(i + 1) == '|')) || (fileContents.charAt(i) == '|' && (fileContents.charAt(i - 1) == '|'))) {
             if (fileContents.charAt(i) == '\\' && escaped == 0) {
                 escaped = 1;
                 i++;
@@ -84,11 +84,6 @@ public class LexicalAnalyzer {
                     i++;
                     break;
                 }
-                case '|': {
-                    tokens.add(new Token("DATA_TYPE_DELIMITER", "|", lineNumber));
-                    i++;
-                    break;
-                }
                 case ';': {
                     tokens.add(new Token("STATEMENT_DELIMITER", ";", lineNumber));
                     i++;
@@ -103,6 +98,13 @@ public class LexicalAnalyzer {
                     tokens.add(new Token("END_OF_FILE_MARKER", "$", lineNumber));
                     i++;
                     break;
+                }
+                case '|': {
+                    if(fileContents.charAt(i + 1) != '|') {
+                        tokens.add(new Token("DATA_TYPE_DELIMITER", "|", lineNumber));
+                        i++;
+                        break;
+                    }
                 }
                 default: {
                     if (Character.isWhitespace(fileContents.charAt(i))) {

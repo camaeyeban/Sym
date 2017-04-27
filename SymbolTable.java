@@ -260,6 +260,10 @@ public class SymbolTable {
 		if(node.getLexemeClass().equals("ANONYMOUS_FUNCTION_BLOCK")) {
 			return DataTypes.FN;
 		}
+
+		if(node.getLexemeClass().equals("CODE_BLOCK")) {
+			return DataTypes.COD;
+		}
 		
 		// might be an uninitialized identifier
 		return DataTypes.IDENTIFIER_UNINITIALIZED;

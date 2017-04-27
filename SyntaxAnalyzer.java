@@ -24,10 +24,16 @@ public class SyntaxAnalyzer {
 		
 		System.out.println("\n ~ ~ ~ ~ ~ --------------------- RECOGNIZER -------------------- ~ ~ ~ ~ ~ \n");
 		Recognizer recognizer = new Recognizer(this.tokens, this.concreteTree);
-		String result = recognizer.recognize();
-        System.out.println("Code is " + result + ".");
+		try {
+			String result = recognizer.recognize();
         System.out.println("\n ~ ~ ~ ~ ~ ----------------- END OF RECOGNIZER ----------------- ~ ~ ~ ~ ~ \n");
-	
+			
+		}
+		catch(Exception e) {
+			System.out.println(e);
+
+			return null;
+		}
 		
 		System.out.println("\n ~ ~ ~ ~ ~ -------------------- CONCRETE TREE ------------------ ~ ~ ~ ~ ~ \n");
 		Stack<Integer> counter = new Stack<Integer> ();

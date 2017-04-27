@@ -16,7 +16,7 @@ public class Recognizer {
 		this.concreteTree = concreteTree;
 	}
 	
-	public String recognize(){
+	public String recognize() throws Exception {
 		TreeNode currentNode = this.concreteTree;
 		for(int i=0; i<this.tokens.size(); ) {
 			String tokenName = tokens.get(i).getType();
@@ -47,7 +47,7 @@ public class Recognizer {
 					currentNode = child;
 				}
 				else{
-					return "REJECTED due to mismatch of current token and top of stack";
+					throw new Exception("REJECTED due to mismatch of current token and top of stack");
 				}
 			}
 			
@@ -58,7 +58,7 @@ public class Recognizer {
 				String production = parseTable.getProduction(row, col);
 
 				if(production == "ERROR"){
-					return "REJECTED due to absence of production rule in the corresponding cell of parse table";
+					throw new Exception("REJECTED due to absence of production rule in the corresponding cell of parse table");
 				}
 				else{
 					GrammarSymbol g = grammarSymbols.pop();
@@ -90,9 +90,9 @@ public class Recognizer {
 			}
 			
 			else{
-				return "REJECTED because the current token is not terminal, nonterminal, and $";
+				throw new Exception("REJECTED because the current token is not terminal, nonterminal, and $");
 			}
 		}
-		return "REJECTED due to absence of $";
+		throw new Exception("REJECTED due to absence of $");
 	}
 }
