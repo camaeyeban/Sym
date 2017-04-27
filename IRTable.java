@@ -37,8 +37,45 @@ public class IRTable {
         else if(node.getLexemeClass().equals("FLOAT_LITERAL")) {
             result = node.getLexeme();
         }
+        else if(node.getLexemeClass().equals("BOOLEAN_LITERAL")) {
+            result = node.getLexeme();
+        }
         else if(node.getLexemeClass().equals("IDENTIFIER")) {
             result = node.getLexeme();
+        }
+        else if(
+            node.getLexemeClass().equals("GREATER THAN") ||
+            node.getLexemeClass().equals("LESS THAN") ||
+            node.getLexemeClass().equals("GREATER THAN OR EQUAL TO") ||
+            node.getLexemeClass().equals("LESS THAN OR EQUAL TO") ||
+            node.getLexemeClass().equals("NOT EQUAL TO") ||
+            node.getLexemeClass().equals("EQUALS")
+        ) {
+            result = this.add(node.getChild(0)) + node.getLexeme() + this.add(node.getChild(1));
+        }
+        else if(node.getLexemeClass().equals("OR")) {
+            IRrowControl row = new IRrowControl(this.add(node.getChild(0)), new IRrowGoto("true").getStatement());
+
+            result = this.add(node.getChild(1));
+
+            table.add(row);
+        }
+        else if(node.getLexemeClass().equals("IF")) {
+            String condition = this.add(node.getChild(0));
+
+            IRrowControl rowTrue = new IRrowControl(condition, new IRrowGoto("true").getStatement());
+
+            table.add(rowTrue);
+
+            IRrowGoto rowFalse = new IRrowGoto("false");
+
+            table.add(rowFalse);
+
+            String trueLabel = this.add(node.getChild(1));
+            String falseLabel = this.add(node.getChild(2));
+
+            rowTrue.setStatement(new IRrowGoto(trueLabel).getStatement());
+            rowFalse.setLabel(falseLabel);
         }
         else if(
             node.getLexemeClass().equals("PRINT") ||
@@ -55,10 +92,12 @@ public class IRTable {
             IRrowProcedure row = new IRrowProcedure(node.getLexeme(), null, params);
 
             table.add(row);
+
+            result = row.getLabel();
         }
         else {
             for(int i = 0; i < node.getChildren().size(); i++) {
-                this.add(node.getChild(i));
+                result = this.add(node.getChild(i));
             }
         }
 

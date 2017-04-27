@@ -5,6 +5,10 @@ public class IRrowGoto extends IRrow {
         this.label = label;
     }
 
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     public String getStatement() {
         return "goto " + this.label;
     }
