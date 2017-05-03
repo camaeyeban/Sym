@@ -81,20 +81,22 @@ public class IRTable {
             table.add(rowFalse);
         }
         else if(node.getLexemeClass().equals("IF")) {
+            int andTrueStackIndex = IRTable.andTrueStack.size();
+            int trueStackIndex = IRTable.trueStack.size();
+            int falseStackIndex = IRTable.falseStack.size();
+            String firstLabel = "";
+
             String condition = this.add(node.getChild(0));
 
             IRrowControl rowTrue = new IRrowControl(condition, new IRrowGoto("").getStatement());
-
-            while(!IRTable.andTrueStack.empty()) {
-                IRTable.andTrueStack.pop().setStatement(new IRrowGoto(rowTrue.getLabel()).getStatement());
-            }
+            firstLabel = rowTrue.getLabel();
 
             IRTable.trueStack.push(rowTrue);
 
             table.add(rowTrue);
 
-            IRrowGoto rowFalse = new IRrowGoto("false");
-            IRrowGoto gotoEnd = new IRrowGoto("end");
+            IRrowGoto rowFalse = new IRrowGoto("");
+            IRrowGoto gotoEnd = new IRrowGoto("");
 
             table.add(rowFalse);
 
@@ -105,12 +107,31 @@ public class IRTable {
 
             String falseLabel = this.add(node.getChild(2));
 
-            while(!IRTable.trueStack.empty()) {
-                IRTable.trueStack.pop().setStatement(new IRrowGoto(trueLabel).getStatement());
+            while(IRTable.andTrueStack.size() > andTrueStackIndex) {
+                IRrow popped = IRTable.andTrueStack.pop();
+                ((IRrowControl)popped).setStatement(new IRrowGoto(rowTrue.getLabel()).getStatement());
+
+                if(popped.getLabel().compareTo(firstLabel) < 0) {
+                    firstLabel = popped.getLabel();
+                }
             }
 
-            while(!IRTable.falseStack.empty()) {
-                IRTable.falseStack.pop().setLabel(falseLabel);
+            while(IRTable.trueStack.size() > trueStackIndex) {
+                IRrow popped = IRTable.trueStack.pop();
+                ((IRrowControl)popped).setStatement(new IRrowGoto(trueLabel).getStatement());
+
+                if(popped.getLabel().compareTo(firstLabel) < 0) {
+                    firstLabel = popped.getLabel();
+                }
+            }
+
+            while(IRTable.falseStack.size() > falseStackIndex) {
+                IRrow popped = IRTable.falseStack.pop();
+                ((IRrowGoto)popped).setLabel(falseLabel);
+
+                if(popped.getLabel().compareTo(firstLabel) < 0) {
+                    firstLabel = popped.getLabel();
+                }
             }
 
             rowFalse.setLabel(falseLabel);
@@ -122,6 +143,63 @@ public class IRTable {
             while(!IRTable.endStack.empty()) {
                 IRTable.endStack.pop().setLabel(endLabel.getLabel());
             }
+
+            result = firstLabel;
+        }
+        else if(node.getLexemeClass().equals("WHILE")) {
+            int andTrueStackIndex = IRTable.andTrueStack.size();
+            int trueStackIndex = IRTable.trueStack.size();
+            int falseStackIndex = IRTable.falseStack.size();
+            String firstLabel = "";
+
+            String condition = this.add(node.getChild(0));
+
+            IRrowControl rowCondition = new IRrowControl(condition, new IRrowGoto("").getStatement());
+            firstLabel = rowCondition.getLabel();
+            IRrowGoto gotoEnd = new IRrowGoto("");
+
+            IRTable.trueStack.push(rowCondition);
+            
+            table.add(rowCondition);
+            table.add(gotoEnd);
+
+            String bodyLabel = this.add(node.getChild(1));
+
+            IRrowGoto loopRow = new IRrowGoto(rowCondition.getLabel());
+            table.add(loopRow);
+
+            IRrow end = new IRrow();
+            gotoEnd.setLabel(end.getLabel());
+            table.add(end);
+
+            while(IRTable.andTrueStack.size() > andTrueStackIndex) {
+                IRrow popped = IRTable.andTrueStack.pop();
+                ((IRrowControl)popped).setStatement(new IRrowGoto(bodyLabel).getStatement());
+
+                if(popped.getLabel().compareTo(firstLabel) < 0) {
+                    firstLabel = popped.getLabel();
+                }
+            }
+
+            while(IRTable.trueStack.size() > trueStackIndex) {
+                IRrow popped = IRTable.trueStack.pop();
+                ((IRrowControl)popped).setStatement(new IRrowGoto(bodyLabel).getStatement());
+
+                if(popped.getLabel().compareTo(firstLabel) < 0) {
+                    firstLabel = popped.getLabel();
+                }
+            }
+
+            while(IRTable.falseStack.size() > falseStackIndex) {
+                IRrow popped = IRTable.falseStack.pop();
+                ((IRrowGoto)popped).setLabel(end.getLabel());
+
+                if(popped.getLabel().compareTo(firstLabel) < 0) {
+                    firstLabel = popped.getLabel();
+                }
+            }
+
+            result = firstLabel;
         }
         else if(
             node.getLexemeClass().equals("PRINT") ||
