@@ -1,7 +1,11 @@
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class IRTable {
-    ArrayList<IRrow> table = new ArrayList<IRrow>();
+    private ArrayList<IRrow> table = new ArrayList<IRrow>();
+
+    private static Stack<IRrowControl> trueStack = new Stack<IRrowControl>();
+    private static Stack<IRrowGoto> endStack = new Stack<IRrowGoto>();
 
     public String add(AbstractSyntaxTreeNode node) {
         String result = "";
@@ -54,7 +58,9 @@ public class IRTable {
             result = this.add(node.getChild(0)) + node.getLexeme() + this.add(node.getChild(1));
         }
         else if(node.getLexemeClass().equals("OR")) {
-            IRrowControl row = new IRrowControl(this.add(node.getChild(0)), new IRrowGoto("true").getStatement());
+            IRrowControl row = new IRrowControl(this.add(node.getChild(0)), new IRrowGoto("INSERT_TRUE_LABEL").getStatement());
+
+            IRTable.trueStack.push(row);
 
             result = this.add(node.getChild(1));
 
@@ -63,19 +69,39 @@ public class IRTable {
         else if(node.getLexemeClass().equals("IF")) {
             String condition = this.add(node.getChild(0));
 
-            IRrowControl rowTrue = new IRrowControl(condition, new IRrowGoto("true").getStatement());
+            IRrowControl rowTrue = new IRrowControl(condition, new IRrowGoto("INSERT_TRUE_LABEL").getStatement());
+
+            IRTable.trueStack.push(rowTrue);
 
             table.add(rowTrue);
 
             IRrowGoto rowFalse = new IRrowGoto("false");
+            IRrowGoto gotoEnd = new IRrowGoto("end");
+
+            // ADD GOTO NEXT
 
             table.add(rowFalse);
 
             String trueLabel = this.add(node.getChild(1));
+
+            table.add(gotoEnd);
+            IRTable.endStack.push(gotoEnd);
+
             String falseLabel = this.add(node.getChild(2));
 
-            rowTrue.setStatement(new IRrowGoto(trueLabel).getStatement());
+            while(!IRTable.trueStack.empty()) {
+                IRTable.trueStack.pop().setStatement(new IRrowGoto(trueLabel).getStatement());
+            }
+
             rowFalse.setLabel(falseLabel);
+
+            IRrow endLabel = new IRrow();
+
+            table.add(endLabel);
+
+            while(!IRTable.endStack.empty()) {
+                IRTable.endStack.pop().setLabel(endLabel.getLabel());
+            }
         }
         else if(
             node.getLexemeClass().equals("PRINT") ||
@@ -90,13 +116,15 @@ public class IRTable {
                 
                 IRrowParameter row = new IRrowParameter(node.getChild(i).getLexeme());
                 table.add(row);
+
+                if(result.equals("")) {
+                    result = row.getLabel();
+                }
             }
 
             IRrowProcedure row = new IRrowProcedure(node.getLexeme(), null, params);
 
             table.add(row);
-
-            result = row.getLabel();
         }
         else {
             for(int i = 0; i < node.getChildren().size(); i++) {
