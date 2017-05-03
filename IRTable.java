@@ -5,7 +5,9 @@ public class IRTable {
     private ArrayList<IRrow> table = new ArrayList<IRrow>();
 
     private static Stack<IRrowControl> trueStack = new Stack<IRrowControl>();
+    private static Stack<IRrowGoto> falseStack = new Stack<IRrowGoto>();
     private static Stack<IRrowGoto> endStack = new Stack<IRrowGoto>();
+    private static Stack<IRrowControl> andTrueStack = new Stack<IRrowControl>();
 
     public String add(AbstractSyntaxTreeNode node) {
         String result = "";
@@ -58,7 +60,7 @@ public class IRTable {
             result = this.add(node.getChild(0)) + node.getLexeme() + this.add(node.getChild(1));
         }
         else if(node.getLexemeClass().equals("OR")) {
-            IRrowControl row = new IRrowControl(this.add(node.getChild(0)), new IRrowGoto("INSERT_TRUE_LABEL").getStatement());
+            IRrowControl row = new IRrowControl(this.add(node.getChild(0)), new IRrowGoto("").getStatement());
 
             IRTable.trueStack.push(row);
 
@@ -66,10 +68,26 @@ public class IRTable {
 
             table.add(row);
         }
+        else if(node.getLexemeClass().equals("AND")) {
+            IRrowControl row1 = new IRrowControl(this.add(node.getChild(0)), new IRrowGoto("").getStatement());
+            IRrowGoto rowFalse = new IRrowGoto("");
+
+            IRTable.andTrueStack.push(row1);
+            IRTable.falseStack.push(rowFalse);
+
+            result = this.add(node.getChild(1));
+
+            table.add(row1);
+            table.add(rowFalse);
+        }
         else if(node.getLexemeClass().equals("IF")) {
             String condition = this.add(node.getChild(0));
 
-            IRrowControl rowTrue = new IRrowControl(condition, new IRrowGoto("INSERT_TRUE_LABEL").getStatement());
+            IRrowControl rowTrue = new IRrowControl(condition, new IRrowGoto("").getStatement());
+
+            while(!IRTable.andTrueStack.empty()) {
+                IRTable.andTrueStack.pop().setStatement(new IRrowGoto(rowTrue.getLabel()).getStatement());
+            }
 
             IRTable.trueStack.push(rowTrue);
 
@@ -77,8 +95,6 @@ public class IRTable {
 
             IRrowGoto rowFalse = new IRrowGoto("false");
             IRrowGoto gotoEnd = new IRrowGoto("end");
-
-            // ADD GOTO NEXT
 
             table.add(rowFalse);
 
@@ -91,6 +107,10 @@ public class IRTable {
 
             while(!IRTable.trueStack.empty()) {
                 IRTable.trueStack.pop().setStatement(new IRrowGoto(trueLabel).getStatement());
+            }
+
+            while(!IRTable.falseStack.empty()) {
+                IRTable.falseStack.pop().setLabel(falseLabel);
             }
 
             rowFalse.setLabel(falseLabel);
