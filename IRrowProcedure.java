@@ -29,4 +29,12 @@ public class IRrowProcedure extends IRrow {
 
         return super.toString() + "call " + this.name + ", " + this.paramCount;
     }
+
+    public String getCommand() {
+        return this.name;
+    }
+
+    public int getParamCount() {
+        return this.paramCount;
+    }
 }
