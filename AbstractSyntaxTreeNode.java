@@ -147,7 +147,7 @@ public class AbstractSyntaxTreeNode {
             }
             case "String": {
                 this.lexemeClass = tree.getLexemeClass();
-                this.lexeme = tree.getChild(1).getLexeme();
+                this.lexeme = "\"" + tree.getChild(1).getLexeme() + "\"";
 
                 break;
             }

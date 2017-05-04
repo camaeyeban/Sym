@@ -1,10 +1,16 @@
 public class IRrow {
     protected String label = "";
+    private String type;
 
     private static int labelIndex = 0;
 
     public IRrow() {
-        this.label = "L" + IRrow.labelIndex++;
+        this("empty");
+    }
+
+    public IRrow(String type) {
+        this.type = type;
+        this.label = "" + IRrow.labelIndex++;
     }
 
     public String getLabel() {
@@ -13,5 +19,9 @@ public class IRrow {
 
     public String toString() {
         return this.label + "\t";
+    }
+
+    public String getType() {
+        return this.type;
     }
 }

@@ -2,6 +2,8 @@ public class IRrowGoto extends IRrow {
     private String label;
 
     public IRrowGoto(String label) {
+        super("goto");
+
         this.label = label;
     }
 

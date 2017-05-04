@@ -7,7 +7,7 @@ public class IRrowAssignment extends IRrow {
     private static int tempVariableIndex = 0;
 
     public IRrowAssignment(String op, String arg1, String arg2, String result) {
-        super();
+        super("assignment");
 
         this.op = op;
         this.arg1 = arg1;

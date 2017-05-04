@@ -7,6 +7,8 @@ public class IRrowProcedure extends IRrow {
     private ArrayList<String> params = new ArrayList<String>();
 
     public IRrowProcedure(String name, String retValue, ArrayList<String> params) {
+        super("call");
+        
         this.name = name;
         this.retValue = retValue;
         this.params = params;

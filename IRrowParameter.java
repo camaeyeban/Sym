@@ -4,6 +4,8 @@ public class IRrowParameter extends IRrow {
     private String name;
 
     public IRrowParameter(String name) {
+        super("param");
+        
         this.name = name;
     }
 

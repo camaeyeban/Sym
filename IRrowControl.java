@@ -3,6 +3,8 @@ public class IRrowControl extends IRrow {
     private String statement;
 
     public IRrowControl(String condition, String statement) {
+        super("if");
+        
         this.condition = condition;
         this.statement = statement;
     }
