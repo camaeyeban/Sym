@@ -1,0 +1,23 @@
+global _start
+section .data
+new_line: db 10
+STR_0: db x, 10
+STR_1: db "Hello World!", 10
+STR_2: db x, 10
+STR_3: db int, 10
+STR_4: db x, 10
+section .text
+_start:
+mov rax, 1
+mov rdi, 1
+mov rsi, STR_1
+mov rdx, 12
+syscall
+mov eax, 4
+mov ebx, 1
+mov ecx, new_line
+mov edx, 1
+int 80h
+mov eax, 60
+xor rdi, rdi
+syscall

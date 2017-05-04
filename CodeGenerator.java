@@ -3,6 +3,8 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class CodeGenerator {
+    private String outputCode;
+
     private ArrayList<CodeConstant> paramConstants = new ArrayList<CodeConstant>();
     private Stack<CodeConstant> paramStack = new Stack<CodeConstant>();
 
@@ -93,6 +95,11 @@ public class CodeGenerator {
             bodyCode + "\n" +
             exit;
 
+        this.outputCode = code;
         return code;
+    }
+
+    public String getOuputCode(){
+        return this.outputCode;
     }
 }
