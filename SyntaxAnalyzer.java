@@ -19,14 +19,14 @@ public class SyntaxAnalyzer {
 	}
 	
 	public AbstractSyntaxTreeNode analyze(){
-		System.out.println("\n------------------------------ SYNTAX ANALYZER ----------------------------\n");
+		// System.out.println("\n------------------------------ SYNTAX ANALYZER ----------------------------\n");
 		
 		
-		System.out.println("\n ~ ~ ~ ~ ~ --------------------- RECOGNIZER -------------------- ~ ~ ~ ~ ~ \n");
+		// System.out.println("\n ~ ~ ~ ~ ~ --------------------- RECOGNIZER -------------------- ~ ~ ~ ~ ~ \n");
 		Recognizer recognizer = new Recognizer(this.tokens, this.concreteTree);
 		try {
 			String result = recognizer.recognize();
-        System.out.println("\n ~ ~ ~ ~ ~ ----------------- END OF RECOGNIZER ----------------- ~ ~ ~ ~ ~ \n");
+        // System.out.println("\n ~ ~ ~ ~ ~ ----------------- END OF RECOGNIZER ----------------- ~ ~ ~ ~ ~ \n");
 			
 		}
 		catch(Exception e) {
@@ -35,24 +35,24 @@ public class SyntaxAnalyzer {
 			return null;
 		}
 		
-		System.out.println("\n ~ ~ ~ ~ ~ -------------------- CONCRETE TREE ------------------ ~ ~ ~ ~ ~ \n");
+		// System.out.println("\n ~ ~ ~ ~ ~ -------------------- CONCRETE TREE ------------------ ~ ~ ~ ~ ~ \n");
 		Stack<Integer> counter = new Stack<Integer> ();
 		counter.push(0);
-		TreeNode.printTree(concreteTree, counter);
-        System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF CONCRETE TREE --------------- ~ ~ ~ ~ ~ \n");
+		// TreeNode.printTree(concreteTree, counter);
+        // System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF CONCRETE TREE --------------- ~ ~ ~ ~ ~ \n");
 
-		System.out.println("\n ~ ~ ~ ~ ~ ------------------------- AST ----------------------- ~ ~ ~ ~ ~ \n");
+		// System.out.println("\n ~ ~ ~ ~ ~ ------------------------- AST ----------------------- ~ ~ ~ ~ ~ \n");
 		ast = new AbstractSyntaxTreeNode(concreteTree);
-		ast.printTree();
-        System.out.println("\n ~ ~ ~ ~ ~ --------------------- END OF AST -------------------- ~ ~ ~ ~ ~ \n");
+		// ast.printTree();
+        // System.out.println("\n ~ ~ ~ ~ ~ --------------------- END OF AST -------------------- ~ ~ ~ ~ ~ \n");
 		
-		System.out.println("\n ~ ~ ~ ~ ~ -------------------- SYMBOL TABLE ------------------- ~ ~ ~ ~ ~ \n");
+		// System.out.println("\n ~ ~ ~ ~ ~ -------------------- SYMBOL TABLE ------------------- ~ ~ ~ ~ ~ \n");
 		symbolTable.create(ast);
-        System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF SYMBOL TABLE ---------------- ~ ~ ~ ~ ~ \n");
+        // System.out.println("\n ~ ~ ~ ~ ~ ---------------- END OF SYMBOL TABLE ---------------- ~ ~ ~ ~ ~ \n");
 		this.errorCount += symbolTable.getErrorCount();
 
 		
-        System.out.println("\n-------------------------- END OF SYNTAX ANALYZER -------------------------\n");
+        // System.out.println("\n-------------------------- END OF SYNTAX ANALYZER -------------------------\n");
 
 		return this.ast;
 	}

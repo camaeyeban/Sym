@@ -17,9 +17,9 @@ public class Compiler {
         String fileContent = this.readFile();
 		fileContent = fileContent.concat("\n$");
 		
-		System.out.println("\n------------------------------- FILE CONTENT ------------------------------\n");
-		System.out.println(fileContent);
-		System.out.println("\n--------------------------- END OF FILE CONTENT ---------------------------\n");
+		// System.out.println("\n------------------------------- FILE CONTENT ------------------------------\n");
+		// System.out.println(fileContent);
+		// System.out.println("\n--------------------------- END OF FILE CONTENT ---------------------------\n");
 
 
 		LexicalAnalyzer lex = new LexicalAnalyzer(fileContent);
@@ -29,21 +29,21 @@ public class Compiler {
 		AbstractSyntaxTreeNode ast = syn.analyze();
 		
 		errorCount += syn.getErrorCount();
-		System.out.println("\n***************************************************************************\n");
-		System.out.println("Found " + this.errorCount + " errors.");
+		// System.out.println("\n***************************************************************************\n");
+		// System.out.println("Found " + this.errorCount + " errors.");
 
 		if(errorCount > 0 || ast == null) return;
 
 		// convert to intermediate representation
 		IRGenerator irGen = new IRGenerator(ast);
 
-		System.out.println("IR:");
+		// System.out.println("IR:");
 		IRTable irTable = irGen.generate();
-		irTable.printTable();
+		// irTable.printTable();
 
 		CodeGenerator codeGenerator = new CodeGenerator(irTable.getTable());
 
-		System.out.println("\n***************************************************************************\n");
+		// System.out.println("\n***************************************************************************\n");
 		System.out.println(codeGenerator.generate());
 	}
 

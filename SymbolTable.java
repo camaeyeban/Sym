@@ -115,7 +115,7 @@ public class SymbolTable {
 		idEntry.setOffset(this.currentOffset);
 		
 		this.idTables.get(blockLevel).put(name, idEntry);
-		System.out.println("ADDED IDENTIFIER: "+name+"\tBlock Level: "+blockLevel+"\tData Type: "+dataType+"\tSize: "+idEntry.getSize()+"\tOffset: "+idEntry.getOffset());
+		// System.out.println("ADDED IDENTIFIER: "+name+"\tBlock Level: "+blockLevel+"\tData Type: "+dataType+"\tSize: "+idEntry.getSize()+"\tOffset: "+idEntry.getOffset());
 	}
 
 	public void printIdTables(){
@@ -151,7 +151,7 @@ public class SymbolTable {
 				}
 				if(symbolToAdd == null) {
 					this.install(ast.getChildren().get(0).getLexeme(), this.getLevel(), ast.getChildren().get(1).getLexeme());
-					this.printIdTables();
+					// this.printIdTables();
 				}
 				else {
 					System.out.println("Error at line " + ast.getChildren().get(0).getLineNumber() + ": Redeclaration of identifier \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");
@@ -165,7 +165,7 @@ public class SymbolTable {
 				}
 				if(symbolToAdd == null) {
 					this.install(ast.getChildren().get(0).getLexeme(), this.getLevel(), ast.getChildren().get(1).getLexeme());
-					this.printIdTables();
+					// this.printIdTables();
 				}
 				else {
 					System.out.println("Error at line " + ast.getChildren().get(0).getLineNumber() + ": Redeclaration of function identifier \"" + ast.getChildren().get(0).getLexeme() + "\" It already exists at block " + symbolToAdd.getBlockLevel() + ".");

@@ -1,1 +1,4 @@
 *.class
+*.out
+*.asm
+*.o

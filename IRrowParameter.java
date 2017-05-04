@@ -13,4 +13,8 @@ public class IRrowParameter extends IRrow {
     public String toString() {
         return super.toString() + "param " + this.name;
     }
+
+    public String getValue() {
+        return this.name;
+    }
 }

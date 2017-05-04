@@ -131,9 +131,9 @@ public class LexicalAnalyzer {
             }
         }
 
-		System.out.println("\n----------------------------- LEXICAL ANALYZER ----------------------------\n");
-        System.out.println(tokens);
-        System.out.println("\n------------------------- END OF LEXICAL ANALYZER -------------------------\n");
+		// System.out.println("\n----------------------------- LEXICAL ANALYZER ----------------------------\n");
+        // System.out.println(tokens);
+        // System.out.println("\n------------------------- END OF LEXICAL ANALYZER -------------------------\n");
 		
         return tokens;
     }
