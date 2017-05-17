@@ -93,7 +93,7 @@ public class Compiler {
 		BufferedWriter bw = null;
 		try {
 			//Specify the file name and path here
-			File file = new File("assemblyCode.txt");
+			File file = new File("assemblyCode.asm");
 
 			/* This logic will make sure that the file 
 			* gets created if it is not present at the

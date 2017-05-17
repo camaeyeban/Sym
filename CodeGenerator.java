@@ -1,67 +1,97 @@
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.stream.Collectors;
+import java.io.*;
 
 public class CodeGenerator {
     private String outputCode;
 
+    private ArrayList<CodeVariable> paramVariables = new ArrayList<CodeVariable>();
     private ArrayList<CodeConstant> paramConstants = new ArrayList<CodeConstant>();
-    private Stack<CodeConstant> paramStack = new Stack<CodeConstant>();
+    private Stack<String> paramStack = new Stack<String>();
 
     private ArrayList<String> body = new ArrayList<String>();
 
     public CodeGenerator(ArrayList<IRrow> table) {
+        int tos = 0;    // latest param is 0 if constant while 1 if variable
         for(IRrow row: table) {
             if(row.getType().equals("param")) {
                 IRrowParameter rowParam = (IRrowParameter)row;
 
-                CodeConstant param = new CodeConstant(rowParam.getValue());
-
-                paramConstants.add(param);
-                paramStack.push(param);
+                paramStack.push(rowParam.getValue());
             }
             else if(row.getType().equals("call")) {
                 IRrowProcedure rowProcedure = (IRrowProcedure)row;
+                String value;
 
-                this.generateCall(rowProcedure.getCommand(), rowProcedure.getParamCount());
+                if(rowProcedure.getCommand().equals(":")){
+                    value = paramStack.pop();
+                    
+                    if(value.matches("\".*\"")){
+                        CodeConstant c = new CodeConstant(value);
+                        paramConstants.add(c);
+                        tos = 0;
+                    }
+                    else{
+                        CodeVariable v = new CodeVariable(value, "");
+                        tos = 1;
+                    }
+                }
+                else if(rowProcedure.getCommand().equals("#")){
+                    String type = paramStack.pop();
+                    String name = paramStack.pop();
+                    
+                    CodeVariable v = new CodeVariable(name, type);
+                    paramVariables.add(v);
+                }
+                
+                this.generateCall(rowProcedure.getCommand(), rowProcedure.getParamCount(), tos);
             }
         }
     }
 
-    public void generateCall(String command, int paramSize) {
+    public void generateCall(String command, int paramSize, int tos) {
         if(command.equals(":")) {
-            CodeConstant str = paramStack.pop();
+            String label = "";
+            int size = 30;
+            if(tos == 0){
+                CodeConstant str = paramConstants.get( paramConstants.size()-1 );
+                label = str.getLabel();
+                size = str.getValue().length() - 2;
+            }
+            else{
+                label = "[" + paramVariables.get( paramVariables.size()-1 ).getName() + "]";
+            }
 
             body.add(
-                "mov rax, 1"
-            );
-            body.add(
-                "mov rdi, 1"
-            );
-            body.add(
-                "mov rsi, " + str.getLabel()
-            );
-            body.add(
-                "mov rdx, " + (str.getValue().length() - 2)
-            );
-            body.add(
-                "syscall"
+                "\tmov rax, 1\n" +
+                "\tmov rdi, 1\n" +
+                "\tmov rsi, " + label + "\n" +
+                "\tmov rdx, " + size + "\n" +
+                "\tsyscall\n"
             );
 
             body.add(
-                "mov eax, 4"
+                "\tmov eax, 4\n" +
+                "\tmov ebx, 1\n" +
+                "\tmov ecx, new_line\n" +
+                "\tmov edx, 1\n" +
+                "\tint 80h\n"
             );
+        }
+        else if(command.equals("->")) {
+            CodeVariable var = paramVariables.get( paramVariables.size()-1 );
+            
             body.add(
-                "mov ebx, 1"
+                "\tmov rax, 0\n" +
+                "\tmov rdi, 0\n" +
+                "\tmov rsi, inputBuffer\n" +
+                "\tmov rdx, 30\n" +
+                "\tsyscall\n"
             );
+            
             body.add(
-                "mov ecx, new_line"
-            );
-            body.add(
-                "mov edx, 1"
-            );
-            body.add(
-                "int 80h"
+                "\tmov [" + var.getName() + "], rsi\n"
             );
         }
     }
@@ -69,27 +99,41 @@ public class CodeGenerator {
     public String generateData() {
         String code = 
             "section .data\n" +
-            "new_line: db 10\n";
+            "\tnew_line: db 10\n\t";
 
-        code += String.join("\n", this.paramConstants
+        code += String.join("\n\t", this.paramConstants
             .stream()
             .map(c -> c.getLabel() + ": db " + c.getValue() + ", 10")
             .collect(Collectors.toList()));
 
-            return code;
+        return code;
     }
 
+    public String generateBss() {
+        String code = 
+            "section .bss\n" +
+            "\tinputBuffer resb 30\n\t";
+
+        code += String.join("\n\t", this.paramVariables
+            .stream()
+            .map(c -> c.getName() + " resb 30")
+            .collect(Collectors.toList()));
+
+        return code;
+    }
+    
     public String generate() {
         String exit =
-            "mov eax, 60\n" +
-            "xor rdi, rdi\n" +
-            "syscall\n";
+            "\tmov eax, 60\n" +
+            "\txor rdi, rdi\n" +
+            "\tsyscall\n";
 
         String bodyCode = String.join("\n", this.body);
 
         String code =
-            "global _start\n" +
-            this.generateData() + "\n" +
+            "global _start\n\n" +
+            this.generateData() + "\n\n" +
+            this.generateBss() + "\n\n" +
             "section .text\n" +
             "_start:\n"+
             bodyCode + "\n" +
