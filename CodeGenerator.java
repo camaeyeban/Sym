@@ -172,6 +172,89 @@ public class CodeGenerator {
                         "\tsub [" + rowAssignment.getResult() + "], rcx\n"
                     );
                 }
+                else if(rowAssignment.getOp().equals("*")) {
+                    String arg1 = rowAssignment.getArg1();
+                    String arg2 = rowAssignment.getArg2();
+
+                    if(!arg1.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rax, [" + arg1 + "]\n"
+                        );
+
+                        arg1 = "rax";
+                    }
+
+                    if(!arg2.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rbx, [" + arg2 + "]\n"
+                        );
+
+                        arg1 = "rbx";
+                    }
+
+                    body.add(
+                        "\tmov rax, " + arg1 + "\n" +
+                        "\tmov rdx, " + arg2 + "\n" +
+                        "\tmul rdx\n" +
+                        "\tmov [" + rowAssignment.getResult() + "]" + ", rax"
+                    );
+                }
+                else if(rowAssignment.getOp().equals("/")) {
+                    String arg1 = rowAssignment.getArg1();
+                    String arg2 = rowAssignment.getArg2();
+
+                    if(!arg1.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rax, [" + arg1 + "]\n"
+                        );
+
+                        arg1 = "rax";
+                    }
+
+                    if(!arg2.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rbx, [" + arg2 + "]\n"
+                        );
+
+                        arg1 = "rbx";
+                    }
+
+                    body.add(
+                        "\txor rdx, rdx\n" +
+                        "\tmov rax, " + arg1 + "\n" +
+                        "\tmov rbx, " + arg2 + "\n" +
+                        "\tdiv rbx\n" +
+                        "\tmov [" + rowAssignment.getResult() + "]" + ", rax"
+                    );
+                }
+                else if(rowAssignment.getOp().equals("%")) {
+                    String arg1 = rowAssignment.getArg1();
+                    String arg2 = rowAssignment.getArg2();
+
+                    if(!arg1.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rax, [" + arg1 + "]\n"
+                        );
+
+                        arg1 = "rax";
+                    }
+
+                    if(!arg2.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rbx, [" + arg2 + "]\n"
+                        );
+
+                        arg1 = "rbx";
+                    }
+
+                    body.add(
+                        "\txor rdx, rdx\n" +
+                        "\tmov rax, " + arg1 + "\n" +
+                        "\tmov rbx, " + arg2 + "\n" +
+                        "\tdiv rbx\n" +
+                        "\tmov [" + rowAssignment.getResult() + "]" + ", rdx"
+                    );
+                }
             }
             else if(row.getType().equals("if")) {
                 IRrowControl rowControl = (IRrowControl)row;
