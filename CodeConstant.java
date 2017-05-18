@@ -16,7 +16,7 @@ public class CodeConstant {
     }
     
     public String getValue() {
-        return this.value + (this.type.equals("STRING") ? " , 10" : "");
+        return this.value + (this.type.equals("str") ? ", 0" : "");
     }
 
     public String getType() {

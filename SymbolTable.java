@@ -276,6 +276,7 @@ public class SymbolTable {
 			result = this.idLookup(node.getLexeme(), 0) != null;
 		}
 		else if(expectedDataType.equals(DataTypes.ANY)) {
+			// @TODO: check for null/undeclared variables	
 			result = true;
 		}
 		else {

@@ -33,4 +33,12 @@ public class IRrowAssignment extends IRrow {
 
         return super.toString() + this.result + " = " + (this.op.equals("=") ? "": this.op + " ") + this.arg1;
     }
+
+    public String getOp() {
+        return this.op;
+    }
+
+    public String getArg1() {
+        return this.arg1;
+    }
 }

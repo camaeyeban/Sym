@@ -224,6 +224,9 @@ public class IRTable {
 
             table.add(row);
         }
+        else if(node.getLexemeClass().equals("String")) {
+            result = node.getLexeme();
+        }
         else {
             for(int i = 0; i < node.getChildren().size(); i++) {
                 result = this.add(node.getChild(i));

@@ -25,21 +25,21 @@ public class CodeGenerator {
                 String value;
 
                 if(rowProcedure.getCommand().equals(":")){
-                    value = paramStack.pop();
+                    value = paramStack.peek();
                     
                     // if string constant
                     if(value.matches("\".*\"")){
-                        CodeConstant c = new CodeConstant(value, "STRING");
+                        CodeConstant c = new CodeConstant(value, "str");
                         paramConstants.add(c);
                         tos = 0;
                     }
                     // if integer constant
                     else if(value.matches("\\d+")) {
-                        CodeConstant c = new CodeConstant(value, "INTEGER");
+                        CodeConstant c = new CodeConstant(value, "int");
                         paramConstants.add(c);
                         tos = 0;
                     }
-                    // if variable
+                    // if variable  
                     else{
                         CodeVariable v = new CodeVariable(value, "");
                         tos = 1;
@@ -55,6 +55,37 @@ public class CodeGenerator {
                 
                 this.generateCall(rowProcedure.getCommand(), rowProcedure.getParamCount(), tos);
             }
+            else if(row.getType().equals("assignment")) {
+                IRrowAssignment rowAssignment = (IRrowAssignment)row;
+
+                if(rowAssignment.getOp().equals("=")) {
+                    String value = rowAssignment.getArg1();
+                    String type = "";
+
+                    // string
+                    if(value.matches("\".*\"")) {
+                        type = "string";
+
+                        CodeConstant c = new CodeConstant(value, "str");
+                        paramConstants.add(c);
+
+                        value = c.getLabel();
+
+                        body.add(
+                            "\tmov rsi, [" + value + "]\n"
+                        );
+
+                        value = "rsi";
+                    }
+                    else {
+                        
+                    }
+
+                    body.add(
+                        "\tmov " + (type.equals("string") ? "" : "byte") + "[" + rowAssignment.getResult() + "], " + value + "\n"
+                    );
+                }
+            }
         }
     }
 
@@ -62,48 +93,57 @@ public class CodeGenerator {
         if(command.equals(":")) {
             String label = "";
             int size = 30;
-            CodeConstant str = null;
+            String type = "";
 
             if(tos == 0){
-                str = paramConstants.get( paramConstants.size() - 1);
+                CodeConstant str = paramConstants.get( paramConstants.size() - 1);
 
                 label = str.getLabel();
-                size = str.getValue().length() - 2;
+                type = str.getType();
             }
             else{
-                label = "[" + paramVariables.get( paramVariables.size()-1 ).getName() + "]";
+                String paramName = paramStack.pop();
+                label = "[" + paramName + "]";
+                
+                CodeVariable variable = null;
+
+                for(CodeVariable v : paramVariables) {
+                    if(v.getName().equals(paramName)) {
+                        variable = v;
+                    }
+                }
+
+                type = variable.getType();
             }
 
-            if(str == null || str.getType().equals("STRING")) {
+            if(type.equals("str")) {
                 body.add(
-                    "\tmov rax, 1\n" +
-                    "\tmov rdi, 1\n" +
                     "\tmov rsi, " + label + "\n" +
-                    "\tmov rdx, " + size + "\n" +
-                    "\tsyscall\n"
+                    "\tmov rdi, string_format\n" +
+                    "\txor rax, rax\n" +
+                    "\tcall printf\n"
                 );
             }
-            else if(str.getType().equals("INTEGER")) {
+            else if(type.equals("int")) {
                 body.add(
-                    "\tsub rsp, 8\n" +
-                    "\tmov rsi, [" + label + "]\n" +
+                    "\tmov rsi, " + label + "\n" +
                     "\tmov rdi, integer_format\n" +
                     "\txor rax, rax\n" +
                     "\tcall printf\n"
                 );
             }
 
-            body.add(
-                "\tmov eax, 4\n" +
-                "\tmov ebx, 1\n" +
-                "\tmov ecx, new_line\n" +
-                "\tmov edx, 1\n" +
-                "\tint 80h\n"
-            );
+            // body.add(
+            //     "\tmov eax, 4\n" +
+            //     "\tmov ebx, 1\n" +
+            //     "\tmov ecx, new_line\n" +
+            //     "\tmov edx, 1\n" +
+            //     "\tint 80h\n"
+            // );
         }
         else if(command.equals("->")) {
-            CodeVariable var = paramVariables.get( paramVariables.size()-1 );
-            
+            String var = paramStack.pop();
+
             body.add(
                 "\tmov rax, 0\n" +
                 "\tmov rdi, 0\n" +
@@ -113,7 +153,7 @@ public class CodeGenerator {
             );
             
             body.add(
-                "\tmov [" + var.getName() + "], rsi\n"
+                "\tmov [" + var + "], rsi\n"
             );
         }
     }
@@ -122,11 +162,12 @@ public class CodeGenerator {
         String code = 
             "section .data\n" +
             "\tnew_line: db 10\n" +
-            "\tinteger_format: db \"%i\", 10, 0\n\t";
+            "\tinteger_format: db \"%i\", 10, 0\n" +
+            "\tstring_format: db \"%s\", 10, 0\n\t";
 
         code += String.join("\n\t", this.paramConstants
             .stream()
-            .map(c -> c.getLabel() + ": db " + c.getValue())
+            .map(c -> c.getLabel() + ": " + (c.getType().equals("int") ? "equ" : "db") +" " + c.getValue())
             .collect(Collectors.toList()));
 
         return code;
@@ -139,7 +180,7 @@ public class CodeGenerator {
 
         code += String.join("\n\t", this.paramVariables
             .stream()
-            .map(c -> c.getName() + " resb 30")
+            .map(c -> c.getName() + " resb " + c.getSize())
             .collect(Collectors.toList()));
 
         return code;

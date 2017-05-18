@@ -41,6 +41,8 @@ public class Compiler {
 
 		if(errorCount > 0 || ast == null) return;
 
+		ast.printTree();
+
 		// convert to intermediate representation
 		IRGenerator irGen = new IRGenerator(ast);
 
