@@ -245,7 +245,7 @@ public class CodeGenerator {
                             "\tmov rbx, [" + arg2 + "]\n"
                         );
 
-                        arg1 = "rbx";
+                        arg2 = "rbx";
                     }
 
                     body.add(
