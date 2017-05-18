@@ -96,6 +96,29 @@ public class CodeGenerator {
                 if(rowControl.getCondition().indexOf("==") > -1) {
                     String[] condition = rowControl.getCondition().split("==");
 
+                    // check if condition[0] is literal
+                    if(condition[0].matches("\\d+") || condition[0].equals("true") || condition[0].equals("false")) {
+                        if(condition[0].equals("true")) {
+                            condition[0] = "1";
+                        }
+                        if(condition[0].equals("false")) {
+                            condition[0] = "0";
+                        }
+
+                        body.add(
+                            "\tmov ah, " + condition[0]
+                        );
+
+                        condition[0] = "ah";
+                    }
+
+                    if(condition[1].equals("true")) {
+                        condition[1] = "1";
+                    }
+                    if(condition[1].equals("false")) {
+                        condition[1] = "0";
+                    }
+                    
                     // check if condition[1] is variable
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
@@ -110,13 +133,36 @@ public class CodeGenerator {
                     }
 
                     body.add(
-                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tje " + rowControl.getTrueLabel() + "\n"
                     );
                 }
                 else if(rowControl.getCondition().indexOf("!=") > -1) {
                     String[] condition = rowControl.getCondition().split("!=");
 
+                    // check if condition[0] is literal
+                    if(condition[0].matches("\\d+") || condition[0].equals("true") || condition[0].equals("false")) {
+                        if(condition[0].equals("true")) {
+                            condition[0] = "1";
+                        }
+                        if(condition[0].equals("false")) {
+                            condition[0] = "0";
+                        }
+
+                        body.add(
+                            "\tmov ah, " + condition[0]
+                        );
+
+                        condition[0] = "ah";
+                    }
+
+                    if(condition[1].equals("true")) {
+                        condition[1] = "1";
+                    }
+                    if(condition[1].equals("false")) {
+                        condition[1] = "0";
+                    }
+                    
                     // check if condition[1] is variable
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
@@ -131,13 +177,36 @@ public class CodeGenerator {
                     }
 
                     body.add(
-                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjne " + rowControl.getTrueLabel() + "\n"
                     );
                 }
                 else if(rowControl.getCondition().indexOf(">=") > -1) {
                     String[] condition = rowControl.getCondition().split(">=");
 
+                    // check if condition[0] is literal
+                    if(condition[0].matches("\\d+") || condition[0].equals("true") || condition[0].equals("false")) {
+                        if(condition[0].equals("true")) {
+                            condition[0] = "1";
+                        }
+                        if(condition[0].equals("false")) {
+                            condition[0] = "0";
+                        }
+
+                        body.add(
+                            "\tmov ah, " + condition[0]
+                        );
+
+                        condition[0] = "ah";
+                    }
+
+                    if(condition[1].equals("true")) {
+                        condition[1] = "1";
+                    }
+                    if(condition[1].equals("false")) {
+                        condition[1] = "0";
+                    }
+                    
                     // check if condition[1] is variable
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
@@ -152,13 +221,36 @@ public class CodeGenerator {
                     }
 
                     body.add(
-                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjge " + rowControl.getTrueLabel() + "\n"
                     );
                 }
                 else if(rowControl.getCondition().indexOf("<=") > -1) {
                     String[] condition = rowControl.getCondition().split("<=");
 
+                    // check if condition[0] is literal
+                    if(condition[0].matches("\\d+") || condition[0].equals("true") || condition[0].equals("false")) {
+                        if(condition[0].equals("true")) {
+                            condition[0] = "1";
+                        }
+                        if(condition[0].equals("false")) {
+                            condition[0] = "0";
+                        }
+
+                        body.add(
+                            "\tmov ah, " + condition[0]
+                        );
+
+                        condition[0] = "ah";
+                    }
+
+                    if(condition[1].equals("true")) {
+                        condition[1] = "1";
+                    }
+                    if(condition[1].equals("false")) {
+                        condition[1] = "0";
+                    }
+                    
                     // check if condition[1] is variable
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
@@ -173,13 +265,36 @@ public class CodeGenerator {
                     }
 
                     body.add(
-                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjle " + rowControl.getTrueLabel() + "\n"
                     );
                 }
                 else if(rowControl.getCondition().indexOf(">") > -1) {
                     String[] condition = rowControl.getCondition().split(">");
 
+                    // check if condition[0] is literal
+                    if(condition[0].matches("\\d+") || condition[0].equals("true") || condition[0].equals("false")) {
+                        if(condition[0].equals("true")) {
+                            condition[0] = "1";
+                        }
+                        if(condition[0].equals("false")) {
+                            condition[0] = "0";
+                        }
+
+                        body.add(
+                            "\tmov ah, " + condition[0]
+                        );
+
+                        condition[0] = "ah";
+                    }
+
+                    if(condition[1].equals("true")) {
+                        condition[1] = "1";
+                    }
+                    if(condition[1].equals("false")) {
+                        condition[1] = "0";
+                    }
+                    
                     // check if condition[1] is variable
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
@@ -194,13 +309,36 @@ public class CodeGenerator {
                     }
 
                     body.add(
-                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjg " + rowControl.getTrueLabel() + "\n"
                     );
                 }
                 else if(rowControl.getCondition().indexOf("<") > -1) {
                     String[] condition = rowControl.getCondition().split("<");
 
+                    // check if condition[0] is literal
+                    if(condition[0].matches("\\d+") || condition[0].equals("true") || condition[0].equals("false")) {
+                        if(condition[0].equals("true")) {
+                            condition[0] = "1";
+                        }
+                        if(condition[0].equals("false")) {
+                            condition[0] = "0";
+                        }
+
+                        body.add(
+                            "\tmov ah, " + condition[0]
+                        );
+
+                        condition[0] = "ah";
+                    }
+
+                    if(condition[1].equals("true")) {
+                        condition[1] = "1";
+                    }
+                    if(condition[1].equals("false")) {
+                        condition[1] = "0";
+                    }
+                    
                     // check if condition[1] is variable
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
@@ -215,7 +353,7 @@ public class CodeGenerator {
                     }
 
                     body.add(
-                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjl " + rowControl.getTrueLabel() + "\n"
                     );
                 }
