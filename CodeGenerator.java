@@ -146,6 +146,32 @@ public class CodeGenerator {
                         "\tadd [" + rowAssignment.getResult() + "], rcx\n"
                     );
                 }
+                else if(rowAssignment.getOp().equals("-")) {
+                    String arg1 = rowAssignment.getArg1();
+                    String arg2 = rowAssignment.getArg2();
+
+                    if(!arg1.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rax, [" + arg1 + "]\n"
+                        );
+
+                        arg1 = "rax";
+                    }
+
+                    if(!arg2.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rbx, [" + arg2 + "]\n"
+                        );
+
+                        arg1 = "rbx";
+                    }
+
+                    body.add(
+                        "\tmov qword[" + rowAssignment.getResult() + "], " + arg1 + "\n" +
+                        "\tmov rcx, " + arg2 + "\n" +
+                        "\tsub [" + rowAssignment.getResult() + "], rcx\n"
+                    );
+                }
             }
             else if(row.getType().equals("if")) {
                 IRrowControl rowControl = (IRrowControl)row;
