@@ -77,8 +77,11 @@ public class CodeGenerator {
 
                         value = "rsi";
                     }
-                    else {
-                        
+                    else if(value.equals("true")) {
+                        value = "1";
+                    }
+                    else if(value.equals("false")) {
+                        value = "0";
                     }
 
                     body.add(
@@ -132,14 +135,14 @@ public class CodeGenerator {
                     "\tcall printf\n"
                 );
             }
-
-            // body.add(
-            //     "\tmov eax, 4\n" +
-            //     "\tmov ebx, 1\n" +
-            //     "\tmov ecx, new_line\n" +
-            //     "\tmov edx, 1\n" +
-            //     "\tint 80h\n"
-            // );
+            else if(type.equals("bln")) {
+                body.add(
+                    "\tmov rsi, " + label + "\n" +
+                    "\tmov rdi, integer_format\n" +
+                    "\txor rax, rax\n" +
+                    "\tcall printf\n"
+                );
+            }
         }
         else if(command.equals("->")) {
             String var = paramStack.pop();
@@ -199,7 +202,7 @@ public class CodeGenerator {
             this.generateData() + "\n\n" +
             this.generateBss() + "\n\n" +
             "section .text\n" +
-            "global main:\n"+
+            "global main\n"+
             "main:\n"+
             bodyCode + "\n" +
             exit;
