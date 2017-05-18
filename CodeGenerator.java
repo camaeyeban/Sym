@@ -59,6 +59,20 @@ public class CodeGenerator {
             else if(row.getType().equals("assignment")) {
                 IRrowAssignment rowAssignment = (IRrowAssignment)row;
 
+                // check if result is in symbol table just to be sure
+                boolean flag = true;
+
+                for(CodeVariable v: paramVariables) {
+                    if(v.getName().equals(rowAssignment.getResult())) {
+                        flag = false;
+                    }
+                }
+
+                if(flag) {
+                    // @TODO: hardcoded integers ang temporary variables
+                    paramVariables.add(new CodeVariable(rowAssignment.getResult(), "int"));
+                }
+
                 if(rowAssignment.getOp().equals("=")) {
                     String value = rowAssignment.getArg1();
                     String type = "";
@@ -84,9 +98,52 @@ public class CodeGenerator {
                     else if(value.equals("false")) {
                         value = "0";
                     }
+                    else if(value.matches("^\\d*$")) {
+                        body.add(
+                            "\tmov rax, " + value
+                        );
+
+                        value = "rax";
+                    }
+                    else {
+                        body.add(
+                            "\tmov rax, " + "[" + value + "]"
+                        );
+
+                        value = "rax";
+                    }
+
+                    String result = "[" + rowAssignment.getResult() + "]";
+                    // result = (type.equals("string") ? "" : "byte") + result;
 
                     body.add(
-                        "\tmov " + (type.equals("string") ? "" : "byte") + "[" + rowAssignment.getResult() + "], " + value + "\n"
+                        "\tmov " + result + ", " + value + "\n"
+                    );
+                }
+                else if(rowAssignment.getOp().equals("+")) {
+                    String arg1 = rowAssignment.getArg1();
+                    String arg2 = rowAssignment.getArg2();
+
+                    if(!arg1.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rax, [" + arg1 + "]\n"
+                        );
+
+                        arg1 = "rax";
+                    }
+
+                    if(!arg2.matches("^\\d+$")) {
+                        body.add(
+                            "\tmov rbx, [" + arg2 + "]\n"
+                        );
+
+                        arg1 = "rbx";
+                    }
+
+                    body.add(
+                        "\tmov qword[" + rowAssignment.getResult() + "], " + arg1 + "\n" +
+                        "\tmov rcx, " + arg2 + "\n" +
+                        "\tadd [" + rowAssignment.getResult() + "], rcx\n"
                     );
                 }
             }
@@ -471,7 +528,7 @@ public class CodeGenerator {
 
         code += String.join("\n\t", this.paramVariables
             .stream()
-            .map(c -> c.getName() + " resb " + c.getSize())
+            .map(c -> c.getName() + " resq " + c.getSize())
             .collect(Collectors.toList()));
 
         return code;
@@ -497,6 +554,16 @@ public class CodeGenerator {
 
         this.outputCode = code;
         return code;
+    }
+
+    private CodeVariable getVariable(String name) {
+        for(CodeVariable v: paramVariables) {
+            if(v.getName().equals(name)) {
+                return v;
+            }
+        }
+
+        return null;
     }
 
     public String getOuputCode(){

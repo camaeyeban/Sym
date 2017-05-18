@@ -41,4 +41,8 @@ public class IRrowAssignment extends IRrow {
     public String getArg1() {
         return this.arg1;
     }
+
+    public String getArg2() {
+        return this.arg2;
+    }
 }

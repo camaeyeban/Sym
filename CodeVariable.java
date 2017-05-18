@@ -17,6 +17,10 @@ public class CodeVariable {
         }
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     public String getName() {
         return this.name;
     }
