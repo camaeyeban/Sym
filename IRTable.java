@@ -100,12 +100,14 @@ public class IRTable {
 
             table.add(rowFalse);
 
-            String trueLabel = this.add(node.getChild(1));
+            String trueLabel = IRrow.peekLabel();
+            this.add(node.getChild(1));
 
             table.add(gotoEnd);
             IRTable.endStack.push(gotoEnd);
 
-            String falseLabel = this.add(node.getChild(2));
+            String falseLabel = IRrow.peekLabel();
+            this.add(node.getChild(2));
 
             while(IRTable.andTrueStack.size() > andTrueStackIndex) {
                 IRrow popped = IRTable.andTrueStack.pop();
@@ -163,7 +165,8 @@ public class IRTable {
             table.add(rowCondition);
             table.add(gotoEnd);
 
-            String bodyLabel = this.add(node.getChild(1));
+            String bodyLabel = IRrow.peekLabel();
+            this.add(node.getChild(1));
 
             IRrowGoto loopRow = new IRrowGoto(rowCondition.getLabel());
             table.add(loopRow);

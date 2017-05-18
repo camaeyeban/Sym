@@ -259,14 +259,14 @@ public class CodeGenerator {
                     String var = rowAssignment.getArg1();
 
                     body.add(
-                        "\tinc byte [" + var + "]\n"
+                        "\tinc qword[" + var + "]\n"
                     );
                 }
                 else if(rowAssignment.getOp().equals("--")){
                     String var = rowAssignment.getArg1();
 
                     body.add(
-                        "\tdec byte [" + var + "]\n"
+                        "\tdec qword[" + var + "]\n"
                     );
                 }
             }
@@ -357,7 +357,7 @@ public class CodeGenerator {
                     }
 
                     body.add(
-                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "qword[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjne " + rowControl.getTrueLabel() + "\n"
                     );
                 }
@@ -374,10 +374,10 @@ public class CodeGenerator {
                         }
 
                         body.add(
-                            "\tmov ah, " + condition[0]
+                            "\tmov rax, " + condition[0]
                         );
 
-                        condition[0] = "ah";
+                        condition[0] = "rax";
                     }
 
                     if(condition[1].equals("true")) {
@@ -391,17 +391,17 @@ public class CodeGenerator {
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
                             body.add(
-                                "\tmov al, [" + condition[1] + "]"
+                                "\tmov rbx, [" + condition[1] + "]"
                             );
 
-                            condition[1] = "al";
+                            condition[1] = "rbx";
 
                             break;
                         }
                     }
 
                     body.add(
-                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("rax") ? "rax" : "qword[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjge " + rowControl.getTrueLabel() + "\n"
                     );
                 }
@@ -418,10 +418,10 @@ public class CodeGenerator {
                         }
 
                         body.add(
-                            "\tmov ah, " + condition[0]
+                            "\tmov rax, " + condition[0]
                         );
 
-                        condition[0] = "ah";
+                        condition[0] = "rax";
                     }
 
                     if(condition[1].equals("true")) {
@@ -435,17 +435,17 @@ public class CodeGenerator {
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
                             body.add(
-                                "\tmov al, [" + condition[1] + "]"
+                                "\tmov rbx, [" + condition[1] + "]"
                             );
 
-                            condition[1] = "al";
+                            condition[1] = "rbx";
 
                             break;
                         }
                     }
 
                     body.add(
-                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("rax") ? "rax" : "qword[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjle " + rowControl.getTrueLabel() + "\n"
                     );
                 }
@@ -462,10 +462,10 @@ public class CodeGenerator {
                         }
 
                         body.add(
-                            "\tmov ah, " + condition[0]
+                            "\tmov rax, " + condition[0]
                         );
 
-                        condition[0] = "ah";
+                        condition[0] = "rax";
                     }
 
                     if(condition[1].equals("true")) {
@@ -479,17 +479,17 @@ public class CodeGenerator {
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
                             body.add(
-                                "\tmov al, [" + condition[1] + "]"
+                                "\tmov rbx, [" + condition[1] + "]"
                             );
 
-                            condition[1] = "al";
+                            condition[1] = "rbx";
 
                             break;
                         }
                     }
 
                     body.add(
-                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("rax") ? "rax" : "qword[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjg " + rowControl.getTrueLabel() + "\n"
                     );
                 }
@@ -506,10 +506,10 @@ public class CodeGenerator {
                         }
 
                         body.add(
-                            "\tmov ah, " + condition[0]
+                            "\tmov rax, " + condition[0]
                         );
 
-                        condition[0] = "ah";
+                        condition[0] = "rax";
                     }
 
                     if(condition[1].equals("true")) {
@@ -523,17 +523,17 @@ public class CodeGenerator {
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
                             body.add(
-                                "\tmov al, [" + condition[1] + "]"
+                                "\tmov rbx, [" + condition[1] + "]"
                             );
 
-                            condition[1] = "al";
+                            condition[1] = "rbx";
 
                             break;
                         }
                     }
 
                     body.add(
-                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("rax") ? "rax" : "qword[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjl " + rowControl.getTrueLabel() + "\n"
                     );
                 }
@@ -545,7 +545,7 @@ public class CodeGenerator {
                 else if(rowControl.getCondition().equals("false")) {}
                 else {
                     body.add(
-                        "\tcmp byte[" + rowControl.getCondition() + "]" + ", 1\n" +
+                        "\tcmp qword[" + rowControl.getCondition() + "]" + ", 1\n" +
                         "\tje " + rowControl.getTrueLabel() + "\n"
                     );
                 }

@@ -24,4 +24,8 @@ public class IRrow {
     public String getType() {
         return this.type;
     }
+
+    public static String peekLabel() {
+        return "__" + IRrow.labelIndex;
+    }
 }
