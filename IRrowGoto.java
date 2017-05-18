@@ -15,6 +15,10 @@ public class IRrowGoto extends IRrow {
         return "goto " + this.label;
     }
 
+    public String getGotoLabel() {
+        return this.label;
+    }
+
     @Override
     public String toString() {
         return super.toString() + this.getStatement();

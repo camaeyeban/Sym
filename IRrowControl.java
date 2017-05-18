@@ -17,4 +17,12 @@ public class IRrowControl extends IRrow {
     public String toString() {
         return super.toString() + "if " + condition + " " + statement;
     }
+
+    public String getCondition() {
+        return this.condition;
+    }
+
+    public String getTrueLabel() {
+        return this.statement.substring(5);
+    }
 }

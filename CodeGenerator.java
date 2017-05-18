@@ -15,6 +15,7 @@ public class CodeGenerator {
     public CodeGenerator(ArrayList<IRrow> table) {
         int tos = 0;    // latest param is 0 if constant while 1 if variable
         for(IRrow row: table) {
+            body.add(row.getLabel() + ":");
             if(row.getType().equals("param")) {
                 IRrowParameter rowParam = (IRrowParameter)row;
 
@@ -88,6 +89,155 @@ public class CodeGenerator {
                         "\tmov " + (type.equals("string") ? "" : "byte") + "[" + rowAssignment.getResult() + "], " + value + "\n"
                     );
                 }
+            }
+            else if(row.getType().equals("if")) {
+                IRrowControl rowControl = (IRrowControl)row;
+
+                if(rowControl.getCondition().indexOf("==") > -1) {
+                    String[] condition = rowControl.getCondition().split("==");
+
+                    // check if condition[1] is variable
+                    for(CodeVariable v: paramVariables) {
+                        if(v.getName().equals(condition[1])) {
+                            body.add(
+                                "\tmov al, [" + condition[1] + "]"
+                            );
+
+                            condition[1] = "al";
+
+                            break;
+                        }
+                    }
+
+                    body.add(
+                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tje " + rowControl.getTrueLabel() + "\n"
+                    );
+                }
+                else if(rowControl.getCondition().indexOf("!=") > -1) {
+                    String[] condition = rowControl.getCondition().split("!=");
+
+                    // check if condition[1] is variable
+                    for(CodeVariable v: paramVariables) {
+                        if(v.getName().equals(condition[1])) {
+                            body.add(
+                                "\tmov al, [" + condition[1] + "]"
+                            );
+
+                            condition[1] = "al";
+
+                            break;
+                        }
+                    }
+
+                    body.add(
+                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tjne " + rowControl.getTrueLabel() + "\n"
+                    );
+                }
+                else if(rowControl.getCondition().indexOf(">=") > -1) {
+                    String[] condition = rowControl.getCondition().split(">=");
+
+                    // check if condition[1] is variable
+                    for(CodeVariable v: paramVariables) {
+                        if(v.getName().equals(condition[1])) {
+                            body.add(
+                                "\tmov al, [" + condition[1] + "]"
+                            );
+
+                            condition[1] = "al";
+
+                            break;
+                        }
+                    }
+
+                    body.add(
+                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tjge " + rowControl.getTrueLabel() + "\n"
+                    );
+                }
+                else if(rowControl.getCondition().indexOf("<=") > -1) {
+                    String[] condition = rowControl.getCondition().split("<=");
+
+                    // check if condition[1] is variable
+                    for(CodeVariable v: paramVariables) {
+                        if(v.getName().equals(condition[1])) {
+                            body.add(
+                                "\tmov al, [" + condition[1] + "]"
+                            );
+
+                            condition[1] = "al";
+
+                            break;
+                        }
+                    }
+
+                    body.add(
+                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tjle " + rowControl.getTrueLabel() + "\n"
+                    );
+                }
+                else if(rowControl.getCondition().indexOf(">") > -1) {
+                    String[] condition = rowControl.getCondition().split(">");
+
+                    // check if condition[1] is variable
+                    for(CodeVariable v: paramVariables) {
+                        if(v.getName().equals(condition[1])) {
+                            body.add(
+                                "\tmov al, [" + condition[1] + "]"
+                            );
+
+                            condition[1] = "al";
+
+                            break;
+                        }
+                    }
+
+                    body.add(
+                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tjg " + rowControl.getTrueLabel() + "\n"
+                    );
+                }
+                else if(rowControl.getCondition().indexOf("<") > -1) {
+                    String[] condition = rowControl.getCondition().split("<");
+
+                    // check if condition[1] is variable
+                    for(CodeVariable v: paramVariables) {
+                        if(v.getName().equals(condition[1])) {
+                            body.add(
+                                "\tmov al, [" + condition[1] + "]"
+                            );
+
+                            condition[1] = "al";
+
+                            break;
+                        }
+                    }
+
+                    body.add(
+                        "\tcmp byte[" + condition[0] + "]" + ", " + condition[1] + "\n" +
+                        "\tjl " + rowControl.getTrueLabel() + "\n"
+                    );
+                }
+                else if(rowControl.getCondition().equals("true")) {
+                    body.add(
+                        "\tjmp " + rowControl.getTrueLabel() + "\n"
+                    );
+                }
+                else if(rowControl.getCondition().equals("false")) {}
+                else {
+                    body.add(
+                        "\tcmp byte[" + rowControl.getCondition() + "]" + ", 1\n" +
+                        "\tje " + rowControl.getTrueLabel() + "\n"
+                    );
+                }
+            }
+            else if(row.getType().equals("goto")) {
+                IRrowGoto rowGoto = (IRrowGoto)row;
+
+                body.add(
+                    "\tjmp " + rowGoto.getGotoLabel()
+                );
             }
         }
     }
