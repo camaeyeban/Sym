@@ -72,7 +72,7 @@ public class CodeGenerator {
                         value = c.getLabel();
 
                         body.add(
-                            "\tmov rsi, [" + value + "]\n"
+                            "\tmov rsi, " + value + "\n"
                         );
 
                         value = "rsi";
