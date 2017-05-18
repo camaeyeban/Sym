@@ -55,7 +55,7 @@ public class Meta {
         );
         RESERVED_FUNCTIONS_LOOKUP_TABLE.put(":",
             new ReservedFunctionsIdentifierDataTypePair("PRINT", "non", new String[] {
-                DataTypes.STR
+                DataTypes.ANY
             })
         );
         RESERVED_FUNCTIONS_LOOKUP_TABLE.put("#",

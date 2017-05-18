@@ -27,11 +27,19 @@ public class CodeGenerator {
                 if(rowProcedure.getCommand().equals(":")){
                     value = paramStack.pop();
                     
+                    // if string constant
                     if(value.matches("\".*\"")){
-                        CodeConstant c = new CodeConstant(value);
+                        CodeConstant c = new CodeConstant(value, "STRING");
                         paramConstants.add(c);
                         tos = 0;
                     }
+                    // if integer constant
+                    else if(value.matches("\\d+")) {
+                        CodeConstant c = new CodeConstant(value, "INTEGER");
+                        paramConstants.add(c);
+                        tos = 0;
+                    }
+                    // if variable
                     else{
                         CodeVariable v = new CodeVariable(value, "");
                         tos = 1;
@@ -54,8 +62,11 @@ public class CodeGenerator {
         if(command.equals(":")) {
             String label = "";
             int size = 30;
+            CodeConstant str = null;
+
             if(tos == 0){
-                CodeConstant str = paramConstants.get( paramConstants.size()-1 );
+                str = paramConstants.get( paramConstants.size() - 1);
+
                 label = str.getLabel();
                 size = str.getValue().length() - 2;
             }
@@ -63,13 +74,24 @@ public class CodeGenerator {
                 label = "[" + paramVariables.get( paramVariables.size()-1 ).getName() + "]";
             }
 
-            body.add(
-                "\tmov rax, 1\n" +
-                "\tmov rdi, 1\n" +
-                "\tmov rsi, " + label + "\n" +
-                "\tmov rdx, " + size + "\n" +
-                "\tsyscall\n"
-            );
+            if(str == null || str.getType().equals("STRING")) {
+                body.add(
+                    "\tmov rax, 1\n" +
+                    "\tmov rdi, 1\n" +
+                    "\tmov rsi, " + label + "\n" +
+                    "\tmov rdx, " + size + "\n" +
+                    "\tsyscall\n"
+                );
+            }
+            else if(str.getType().equals("INTEGER")) {
+                body.add(
+                    "\tsub rsp, 8\n" +
+                    "\tmov rsi, [" + label + "]\n" +
+                    "\tmov rdi, integer_format\n" +
+                    "\txor rax, rax\n" +
+                    "\tcall printf\n"
+                );
+            }
 
             body.add(
                 "\tmov eax, 4\n" +
@@ -99,11 +121,12 @@ public class CodeGenerator {
     public String generateData() {
         String code = 
             "section .data\n" +
-            "\tnew_line: db 10\n\t";
+            "\tnew_line: db 10\n" +
+            "\tinteger_format: db \"%i\", 10, 0\n\t";
 
         code += String.join("\n\t", this.paramConstants
             .stream()
-            .map(c -> c.getLabel() + ": db " + c.getValue() + ", 10")
+            .map(c -> c.getLabel() + ": db " + c.getValue())
             .collect(Collectors.toList()));
 
         return code;
@@ -131,11 +154,12 @@ public class CodeGenerator {
         String bodyCode = String.join("\n", this.body);
 
         String code =
-            "global _start\n\n" +
+            "extern printf\n" +
             this.generateData() + "\n\n" +
             this.generateBss() + "\n\n" +
             "section .text\n" +
-            "_start:\n"+
+            "global main:\n"+
+            "main:\n"+
             bodyCode + "\n" +
             exit;
 

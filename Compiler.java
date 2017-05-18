@@ -44,13 +44,13 @@ public class Compiler {
 		// convert to intermediate representation
 		IRGenerator irGen = new IRGenerator(ast);
 
-		// System.out.println("IR:");
+		System.out.println("IR:");
 		IRTable irTable = irGen.generate();
-		// irTable.printTable();
+		irTable.printTable();
 
 		CodeGenerator codeGenerator = new CodeGenerator(irTable.getTable());
 
-		// System.out.println("\n***************************************************************************\n");
+		System.out.println("\n***************************************************************************\n");
 		System.out.println(codeGenerator.generate());
 		this.assemblyCode = codeGenerator.getOuputCode();
 
@@ -105,7 +105,6 @@ public class Compiler {
 			FileWriter fw = new FileWriter(file);
 			bw = new BufferedWriter(fw);
 			bw.write(this.assemblyCode);
-			System.out.println("File written Successfully");
 
 		} catch (IOException ioe) {
 			ioe.printStackTrace();

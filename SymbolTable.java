@@ -275,6 +275,9 @@ public class SymbolTable {
 		if(expectedDataType.equals(DataTypes.IDENTIFIER)) {
 			result = this.idLookup(node.getLexeme(), 0) != null;
 		}
+		else if(expectedDataType.equals(DataTypes.ANY)) {
+			result = true;
+		}
 		else {
 			result = this.getDataType(node).equals(expectedDataType);
 		}
