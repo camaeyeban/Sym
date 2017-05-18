@@ -10,7 +10,7 @@ public class IRrow {
 
     public IRrow(String type) {
         this.type = type;
-        this.label = "" + IRrow.labelIndex++;
+        this.label = "__" + IRrow.labelIndex++;
     }
 
     public String getLabel() {
