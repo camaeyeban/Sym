@@ -89,6 +89,20 @@ public class CodeGenerator {
                         "\tmov " + (type.equals("string") ? "" : "byte") + "[" + rowAssignment.getResult() + "], " + value + "\n"
                     );
                 }
+                else if(rowAssignment.getOp().equals("++")){
+                    String var = rowAssignment.getArg1();
+
+                    body.add(
+                        "\tinc byte [" + var + "]\n"
+                    );
+                }
+                else if(rowAssignment.getOp().equals("--")){
+                    String var = rowAssignment.getArg1();
+
+                    body.add(
+                        "\tdec byte [" + var + "]\n"
+                    );
+                }
             }
             else if(row.getType().equals("if")) {
                 IRrowControl rowControl = (IRrowControl)row;
@@ -446,6 +460,16 @@ public class CodeGenerator {
             body.add(
                 "\tmov [" + var + "], rsi\n"
             );
+
+
+            if(paramVariables.get( paramVariables.size() - 1 ).getType().equals("int")){
+                body.add(
+                    "\tmov rdi, [" + var + "]\n" +
+                    "\tcall atoi\n" +
+                    "\tmov [" + var + "], rax\n"
+                );
+            }
+
         }
     }
 
@@ -487,6 +511,7 @@ public class CodeGenerator {
 
         String code =
             "extern printf\n" +
+            "extern atoi\n\n" +
             this.generateData() + "\n\n" +
             this.generateBss() + "\n\n" +
             "section .text\n" +
