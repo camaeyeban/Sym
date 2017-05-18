@@ -137,13 +137,14 @@ public class CodeGenerator {
                             "\tmov rbx, [" + arg2 + "]\n"
                         );
 
-                        arg1 = "rbx";
+                        arg2 = "rbx";
                     }
 
                     body.add(
-                        "\tmov qword[" + rowAssignment.getResult() + "], " + arg1 + "\n" +
+                        "\tmov rdx, " + arg1 + "\n" +
                         "\tmov rcx, " + arg2 + "\n" +
-                        "\tadd [" + rowAssignment.getResult() + "], rcx\n"
+                        "\tadd rdx, rcx\n" +
+                        "\tmov [" + rowAssignment.getResult() + "], rdx\n"
                     );
                 }
                 else if(rowAssignment.getOp().equals("-")) {
@@ -163,7 +164,7 @@ public class CodeGenerator {
                             "\tmov rbx, [" + arg2 + "]\n"
                         );
 
-                        arg1 = "rbx";
+                        arg2 = "rbx";
                     }
 
                     body.add(
@@ -189,7 +190,7 @@ public class CodeGenerator {
                             "\tmov rbx, [" + arg2 + "]\n"
                         );
 
-                        arg1 = "rbx";
+                        arg2 = "rbx";
                     }
 
                     body.add(
@@ -216,7 +217,7 @@ public class CodeGenerator {
                             "\tmov rbx, [" + arg2 + "]\n"
                         );
 
-                        arg1 = "rbx";
+                        arg2 = "rbx";
                     }
 
                     body.add(
@@ -286,10 +287,10 @@ public class CodeGenerator {
                         }
 
                         body.add(
-                            "\tmov ah, " + condition[0]
+                            "\tmov rbx, " + condition[0]
                         );
 
-                        condition[0] = "ah";
+                        condition[0] = "rbx";
                     }
 
                     if(condition[1].equals("true")) {
@@ -303,17 +304,17 @@ public class CodeGenerator {
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
                             body.add(
-                                "\tmov al, [" + condition[1] + "]"
+                                "\tmov rax, [" + condition[1] + "]"
                             );
 
-                            condition[1] = "al";
+                            condition[1] = "rax";
 
                             break;
                         }
                     }
 
                     body.add(
-                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "byte[" + condition[0] + "]") + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("rax") ? "rax" : "qword[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tje " + rowControl.getTrueLabel() + "\n"
                     );
                 }
@@ -330,10 +331,10 @@ public class CodeGenerator {
                         }
 
                         body.add(
-                            "\tmov ah, " + condition[0]
+                            "\tmov rax, " + condition[0]
                         );
 
-                        condition[0] = "ah";
+                        condition[0] = "rax";
                     }
 
                     if(condition[1].equals("true")) {
@@ -347,17 +348,17 @@ public class CodeGenerator {
                     for(CodeVariable v: paramVariables) {
                         if(v.getName().equals(condition[1])) {
                             body.add(
-                                "\tmov al, [" + condition[1] + "]"
+                                "\tmov rbx, [" + condition[1] + "]"
                             );
 
-                            condition[1] = "al";
+                            condition[1] = "rbx";
 
                             break;
                         }
                     }
 
                     body.add(
-                        "\tcmp " + (condition[0].equals("ah") ? "ah" : "qword[" + condition[0] + "]") + ", " + condition[1] + "\n" +
+                        "\tcmp " + (condition[0].equals("rax") ? "rax" : "qword[" + condition[0] + "]") + ", " + condition[1] + "\n" +
                         "\tjne " + rowControl.getTrueLabel() + "\n"
                     );
                 }
