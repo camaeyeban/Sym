@@ -41,19 +41,19 @@ public class Compiler {
 
 		if(errorCount > 0 || ast == null) return;
 
-		ast.printTree();
+		// ast.printTree();
 
 		// convert to intermediate representation
 		IRGenerator irGen = new IRGenerator(ast);
 
-		System.out.println("IR:");
+		// System.out.println("IR:");
 		IRTable irTable = irGen.generate();
-		irTable.printTable();
+		// irTable.printTable();
 
 		CodeGenerator codeGenerator = new CodeGenerator(irTable.getTable());
 
-		System.out.println("\n***************************************************************************\n");
-		System.out.println(codeGenerator.generate());
+		// System.out.println("\n***************************************************************************\n");
+		codeGenerator.generate();
 		this.assemblyCode = codeGenerator.getOuputCode();
 
 		this.saveToFile();
